@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34018.315
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudDrive", "CloudDrive\CloudDrive.csproj", "{6D979B01-254A-47F6-8867-387A8DFD23B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{F398904F-DE63-4090-ACC9-53762DDA3E14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{FA6840E6-7388-42EB-B5D3-7000BCB0635C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{BCFB804E-9CA0-4F63-A6E3-6EBF56CC9AA3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Migrations", "Infrastructure.Migrations\Infrastructure.Migrations.csproj", "{DDADAD48-C3AD-4B0F-9001-42E30360EEE9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{BFA85C03-80C0-46DA-A5A5-74DABDF94EC7}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6D979B01-254A-47F6-8867-387A8DFD23B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D979B01-254A-47F6-8867-387A8DFD23B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D979B01-254A-47F6-8867-387A8DFD23B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D979B01-254A-47F6-8867-387A8DFD23B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F398904F-DE63-4090-ACC9-53762DDA3E14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F398904F-DE63-4090-ACC9-53762DDA3E14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F398904F-DE63-4090-ACC9-53762DDA3E14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F398904F-DE63-4090-ACC9-53762DDA3E14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA6840E6-7388-42EB-B5D3-7000BCB0635C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA6840E6-7388-42EB-B5D3-7000BCB0635C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA6840E6-7388-42EB-B5D3-7000BCB0635C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA6840E6-7388-42EB-B5D3-7000BCB0635C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCFB804E-9CA0-4F63-A6E3-6EBF56CC9AA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCFB804E-9CA0-4F63-A6E3-6EBF56CC9AA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCFB804E-9CA0-4F63-A6E3-6EBF56CC9AA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCFB804E-9CA0-4F63-A6E3-6EBF56CC9AA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDADAD48-C3AD-4B0F-9001-42E30360EEE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDADAD48-C3AD-4B0F-9001-42E30360EEE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDADAD48-C3AD-4B0F-9001-42E30360EEE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDADAD48-C3AD-4B0F-9001-42E30360EEE9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CC4CDE15-A984-4FFF-B402-13157E7ED9B1}
+	EndGlobalSection
+EndGlobal
