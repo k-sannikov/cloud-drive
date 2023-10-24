@@ -1,7 +1,5 @@
 ﻿using Application.AccessApp.Repository;
 using Domain.AccessService;
-using Domain.FileSystem;
-using Domain.UserService;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,11 +24,11 @@ public class AccessRepository : IAccessRepository
         _entities.Remove(access);
     }
 
-    public async Task<List<Access>> GetAccesses(User user, List<Node> nodes)
+    public async Task<List<Access>> GetAccesses(UserForAccess user, List<NodeForAccess> nodes)
     {
-        List<Guid> nodesGuids = new List<Guid>();
+        List<string> nodesGuids = new List<string>();
         
-        foreach (Node node in nodes)
+        foreach (NodeForAccess node in nodes)
         {
             nodesGuids.Add(node.Id);
         }
@@ -38,17 +36,17 @@ public class AccessRepository : IAccessRepository
         return await _entities.Where(a => a.UserId == user.Id && nodesGuids.Contains(a.NodeId)).ToListAsync();
     }
 
-    public async Task<List<Access>> GetAllByUser(User user)
+    public async Task<List<Access>> GetAllByUser(UserForAccess user)
     {
         return await _entities.Where(a => a.UserId == user.Id).ToListAsync();
     }
 
-    public async Task<List<Access>> GetAllByNode(Node node)
+    public async Task<List<Access>> GetAllByNode(NodeForAccess node)
     {
         return await _entities.Where(a => a.NodeId == node.Id).ToListAsync();
     }
 
-    public async Task<Access> GetAccess(User user, Node node)
+    public async Task<Access> GetAccess(UserForAccess user, NodeForAccess node)
     {
         return await _entities.FirstOrDefaultAsync(a => a.UserId == user.Id && a.NodeId == node.Id);
     }

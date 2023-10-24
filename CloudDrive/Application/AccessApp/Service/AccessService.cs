@@ -1,8 +1,6 @@
 ﻿using Application.AccessApp.Repository;
 using Application.Exceptions;
 using Domain.AccessService;
-using Domain.FileSystem;
-using Domain.UserService;
 
 namespace Application.AccessApp.Service;
 
@@ -15,22 +13,17 @@ public class AccessService : IAccessService
         _accessRepository = accessRepository;
     }
 
-    public async Task AddAccess(User user, Node node, bool isOwner = false)
+    public async Task AddAccess(UserForAccess user, NodeForAccess node, bool isOwner = false)
     {
         Access access = new Access();
         access.SetUser(user);
         access.SetNode(node);
-        access.SetIsNotOwner();
-
-        if (isOwner)
-        {
-            access.SetIsOwner();
-        }
+        access.SetIsOwner(isOwner);
 
         await _accessRepository.AddAccess(access);
     }
 
-    public async Task DeleteAccess(User user, Node node)
+    public async Task DeleteAccess(UserForAccess user, NodeForAccess node)
     {
         Access? access = await _accessRepository.GetAccess(user, node);
 
@@ -42,7 +35,7 @@ public class AccessService : IAccessService
         _accessRepository.DeleteAccess(access);
     }
 
-    public async Task DeleteAllAccessesByUser(User user)
+    public async Task DeleteAllAccessesByUser(UserForAccess user)
     {
         List<Access> accesses = await _accessRepository.GetAllByUser(user);
 
@@ -54,7 +47,7 @@ public class AccessService : IAccessService
         }
     }
 
-    public async Task DeleteAllAccessesByNode(Node node)
+    public async Task DeleteAllAccessesByNode(NodeForAccess node)
     {
         List<Access> accesses = await _accessRepository.GetAllByNode(node);
 
@@ -66,36 +59,27 @@ public class AccessService : IAccessService
         }
     }
 
-    public async Task<bool> UserHasAccess(User user, List<Node> nodes)
+    public async Task<bool> UserHasAccess(UserForAccess user, List<NodeForAccess> nodes)
     {
         List<Access> accesses = await _accessRepository.GetAccesses(user, nodes);
 
-        if (accesses.Count == 0)
-        {
-            return false;
-        }
-
-        return true;
+        return accesses.Any();
     }
-    public async Task<List<Access>> GetAllUsersAccesses(User user)
+    public async Task<List<Access>> GetAllUsersAccesses(UserForAccess user)
     {
         List<Access> accesses = await _accessRepository.GetAllByUser(user);
 
-        CheckUserAccesses(accesses);
-
         return accesses;
     }
 
-    public async Task<List<Access>> GetAllAccessesToNode(Node node)
+    public async Task<List<Access>> GetAllAccessesToNode(NodeForAccess node)
     {
         List<Access> accesses = await _accessRepository.GetAllByNode(node);
 
-        CheckNodeAccesses(accesses);
-
         return accesses;
     }
 
-    public async Task<Access> GetAccess(User user, Node node)
+    public async Task<Access> GetAccess(UserForAccess user, NodeForAccess node)
     {
         Access access = await _accessRepository.GetAccess(user, node);
 

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.AccessService.Config;
+namespace Infrastructure.Database.Config;
 
 public class AccessConfiguration : IEntityTypeConfiguration<Access>
 {
@@ -17,7 +17,7 @@ public class AccessConfiguration : IEntityTypeConfiguration<Access>
 
         builder.Property(a => a.IsOwner).HasColumnName("is_owner").IsRequired();
 
-        builder.HasOne(a => a.User).WithMany(u => u.Accesses).HasForeignKey();
-        builder.HasOne(a => a.Node).WithMany(n => n.Accesses).HasForeignKey();
+        builder.HasOne(a => a.User).WithMany(u => u.Accesses).HasForeignKey(a => a.UserId);
+        builder.HasOne(a => a.Node).WithMany(n => n.Accesses).HasForeignKey(a => a.NodeId);
     }
 }

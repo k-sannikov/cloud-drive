@@ -1,38 +1,30 @@
-﻿using Domain.FileSystem;
-using Domain.UserService;
-
-namespace Domain.AccessService;
+﻿namespace Domain.AccessService;
 
 public class Access
 {
     public int UserId { get; set; }
-    public Guid NodeId { get; set; }
+    public string NodeId { get; set; }
     public bool IsOwner { get; set; }
 
     // Внешние ключи +
-    public User User { get; set; }
-    public Node Node { get; set; }
+    public UserForAccess User { get; set; }
+    public NodeForAccess Node { get; set; }
     // Внешние ключи -
 
-    public void SetUser(User user)
+    public void SetUser(UserForAccess user)
     {
         User = user;
         UserId = User.Id;
     }
 
-    public void SetNode(Node node)
+    public void SetNode(NodeForAccess node)
     {
         Node = node;
         NodeId = Node.Id;
     }
 
-    public void SetIsOwner()
+    public void SetIsOwner(bool isOwner)
     {
-        IsOwner = true;
-    }
-
-    public void SetIsNotOwner()
-    {
-        IsOwner = false;
+        IsOwner = isOwner;
     }
 }
