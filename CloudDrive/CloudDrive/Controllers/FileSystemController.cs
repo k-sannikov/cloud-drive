@@ -1,4 +1,5 @@
-﻿using Application.FileSystem;
+﻿using Application.AccessSystem;
+using Application.FileSystem;
 using CloudDrive.Dto;
 using CloudDrive.Utilities;
 using Domain.FileSystem;
@@ -13,11 +14,17 @@ namespace CloudDrive.Controllers;
 public class FileSystemController : ControllerBase
 {
     private readonly IFileSystemService _fileSystemService;
+    private readonly IAccessService _accessService;
     private readonly IValidator<EditNameNodeDto> _editNameNodeDtoValidator;
 
-    public FileSystemController(IFileSystemService fileSystemService, IValidator<EditNameNodeDto> editNameNodeDtoValidator)
+    private const int _userId = 0;
+
+    public FileSystemController(IFileSystemService fileSystemService,
+        IAccessService accessService,
+        IValidator<EditNameNodeDto> editNameNodeDtoValidator)
     {
         _fileSystemService = fileSystemService;
+        _accessService = accessService;
         _editNameNodeDtoValidator = editNameNodeDtoValidator;
     }
 
@@ -29,6 +36,13 @@ public class FileSystemController : ControllerBase
     [Route("{nodeId}/childs")]
     public async Task<IActionResult> GetChildsNodes([FromRoute] string nodeId)
     {
+        bool hasAccess = await _accessService.HasAccess(_userId, nodeId);
+
+        if (!hasAccess)
+        {
+            return Forbid();
+        }
+
         IReadOnlyList<Node> nodes = await _fileSystemService.GetChildNodes(nodeId);
 
         IReadOnlyList<NodeDto> nodesDto = nodes.Select(n => n.ToDto()).ToList();
@@ -43,6 +57,13 @@ public class FileSystemController : ControllerBase
     [Route("{nodeId}/parents")]
     public async Task<IActionResult> GetParentsNodes([FromRoute] string nodeId)
     {
+        bool hasAccess = await _accessService.HasAccess(_userId, nodeId);
+
+        if (!hasAccess)
+        {
+            return Forbid();
+        }
+
         IReadOnlyList<Node> nodes;
         try
         {
@@ -66,6 +87,13 @@ public class FileSystemController : ControllerBase
     [Route("{nodeId}")]
     public async Task<IActionResult> RenameNode([FromRoute] string nodeId, [FromBody] EditNameNodeDto body)
     {
+        bool hasAccess = await _accessService.HasAccess(_userId, nodeId);
+
+        if (!hasAccess)
+        {
+            return Forbid();
+        }
+
         ValidationResult validationResult = await _editNameNodeDtoValidator.ValidateAsync(body);
 
         if (!validationResult.IsValid)
@@ -95,6 +123,13 @@ public class FileSystemController : ControllerBase
     [Route("{nodeId}")]
     public async Task<IActionResult> DeleteNode([FromRoute] string nodeId)
     {
+        bool hasAccess = await _accessService.HasAccess(_userId, nodeId);
+
+        if (!hasAccess)
+        {
+            return Forbid();
+        }
+
         try
         {
             await _fileSystemService.DeleteNode(nodeId);

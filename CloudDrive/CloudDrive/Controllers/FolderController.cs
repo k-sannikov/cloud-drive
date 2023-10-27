@@ -1,4 +1,5 @@
-﻿using Application.Folders;
+﻿using Application.AccessSystem;
+using Application.Folders;
 using CloudDrive.Dto;
 using CloudDrive.Utilities;
 using Domain.FileSystem;
@@ -13,11 +14,17 @@ namespace CloudDrive.Controllers;
 public class FolderController : ControllerBase
 {
     private readonly IFoldersService _foldersService;
+    private readonly IAccessService _accessService;
     private readonly IValidator<CreateFolderDto> _createFolderDtoValidator;
 
-    public FolderController(IFoldersService foldersService, IValidator<CreateFolderDto> createFolderDtoValidator)
+    private const int _userId = 0;
+
+    public FolderController(IFoldersService foldersService,
+        IAccessService accessService,
+        IValidator<CreateFolderDto> createFolderDtoValidator)
     {
         _foldersService = foldersService;
+        _accessService = accessService;
         _createFolderDtoValidator = createFolderDtoValidator;
     }
 
@@ -38,6 +45,13 @@ public class FolderController : ControllerBase
     [Route("")]
     public async Task<IActionResult> CreateFolder([FromBody] CreateFolderDto body)
     {
+        bool hasAccess = await _accessService.HasAccess(_userId, body.ParentId);
+
+        if (!hasAccess)
+        {
+            return Forbid();
+        }
+
         ValidationResult validationResult = await _createFolderDtoValidator.ValidateAsync(body);
 
         if (!validationResult.IsValid)

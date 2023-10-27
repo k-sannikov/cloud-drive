@@ -1,6 +1,8 @@
 using CloudDrive.Dto;
 using FluentValidation;
 using Infrastructure;
+using Infrastructure.AccessSystem;
+using Infrastructure.Auth;
 using Infrastructure.FileSystem;
 using Infrastructure.Folders;
 using Microsoft.OpenApi.Models;
@@ -53,6 +55,12 @@ namespace CloudDrive
             services.Configure<Neo4jSettings>(configuration.GetSection("Neo4j"));
 
             services.AddDatabaseFoundations(configuration);
+
+            services.AddAccessSystemRepositories();
+            services.AddAccessSystemServices();
+
+            services.AddAuthRepositories();
+            //services.AddAuthServices();
 
 
             var app = builder.Build();
