@@ -1,8 +1,11 @@
 using CloudDrive.Dto;
 using FluentValidation;
 using Infrastructure;
+using Infrastructure.AccessSystem;
+using Infrastructure.Auth;
 using Infrastructure.FileSystem;
 using Infrastructure.Folders;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
@@ -49,10 +52,32 @@ namespace CloudDrive
             services.AddValidatorsFromAssemblyContaining<CreateLinkDto>();
             services.AddValidatorsFromAssemblyContaining<EditLinkDto>();
             services.AddValidatorsFromAssemblyContaining<EditNameNodeDto>();
+            services.AddValidatorsFromAssemblyContaining<RegisterDto>();
+            services.AddValidatorsFromAssemblyContaining<LoginDto>();
 
             services.Configure<Neo4jSettings>(configuration.GetSection("Neo4j"));
 
             services.AddDatabaseFoundations(configuration);
+
+            services.AddAccessSystemRepositories();
+            services.AddAccessSystemServices();
+
+            services.AddAuthRepositories();
+            services.AddAuthServices();
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(option =>
+            {
+                option.Cookie.Name = "Lufi";
+                option.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+                option.SlidingExpiration = true;
+
+                option.Events.OnRedirectToAccessDenied =
+                option.Events.OnRedirectToLogin = c =>
+                {
+                    c.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return Task.FromResult<object>(null);
+                };
+            });
 
 
             var app = builder.Build();
@@ -66,7 +91,10 @@ namespace CloudDrive
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseCookiePolicy();
 
 
             app.MapControllers();

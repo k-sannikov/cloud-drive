@@ -56,4 +56,13 @@ public static class NodeDtoExtension
             Url = body.Url,
         };
     }
+
+    public static NodeListDto ToDto(this IReadOnlyList<Node> nodes, string parentId)
+    {
+        return new NodeListDto()
+        {
+            ParentId = parentId,
+            Nodes = nodes.Select(n => n.ToDto()).ToList(),
+        };
+    }
 }

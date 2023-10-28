@@ -6,7 +6,7 @@ namespace CloudDrive.Dto.Validators
     {
         public EditNameNodeDtoValidator()
         {
-            RuleFor(createFolderDto => createFolderDto.Name)
+            RuleFor(editNameDto => editNameDto.Name)
                 .NotEmpty()
                 .MaximumLength(60);
         }

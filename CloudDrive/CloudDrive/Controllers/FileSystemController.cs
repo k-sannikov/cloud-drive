@@ -1,26 +1,32 @@
-﻿using Application.FileSystem;
+﻿using Application.AccessSystem;
+using Application.FileSystem;
 using CloudDrive.Dto;
 using CloudDrive.Utilities;
 using Domain.FileSystem;
 using FluentValidation;
-using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace CloudDrive.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/nodes")]
 public class FileSystemController : ControllerBase
 {
     private readonly IFileSystemService _fileSystemService;
+    private readonly IAccessService _accessService;
     private readonly IValidator<EditNameNodeDto> _editNameNodeDtoValidator;
 
-    public FileSystemController(IFileSystemService fileSystemService, IValidator<EditNameNodeDto> editNameNodeDtoValidator)
+    public FileSystemController(IFileSystemService fileSystemService,
+        IAccessService accessService,
+        IValidator<EditNameNodeDto> editNameNodeDtoValidator)
     {
         _fileSystemService = fileSystemService;
+        _accessService = accessService;
         _editNameNodeDtoValidator = editNameNodeDtoValidator;
     }
-
 
     /// <summary>
     /// Получить дочерние ноды
@@ -29,11 +35,24 @@ public class FileSystemController : ControllerBase
     [Route("{nodeId}/childs")]
     public async Task<IActionResult> GetChildsNodes([FromRoute] string nodeId)
     {
-        IReadOnlyList<Node> nodes = await _fileSystemService.GetChildNodes(nodeId);
+        bool hasAccess = await _accessService.HasAccess(User.GetUserId(), nodeId);
 
-        IReadOnlyList<NodeDto> nodesDto = nodes.Select(n => n.ToDto()).ToList();
+        if (!hasAccess)
+        {
+            return StatusCode(403, new ErrorResponse("No accesses"));
+        }
 
-        return Ok(nodesDto);
+        IReadOnlyList<Node> nodes;
+        try
+        {
+            nodes = await _fileSystemService.GetChildNodes(nodeId);
+        }
+        catch (Exception exception)
+        {
+            return BadRequest(new ErrorResponse(exception.Message));
+        }
+
+        return Ok(nodes.ToDto(nodeId));
     }
 
     /// <summary>
@@ -43,15 +62,21 @@ public class FileSystemController : ControllerBase
     [Route("{nodeId}/parents")]
     public async Task<IActionResult> GetParentsNodes([FromRoute] string nodeId)
     {
+        bool hasAccess = await _accessService.HasAccess(User.GetUserId(), nodeId);
+
+        if (!hasAccess)
+        {
+            return StatusCode(403, new ErrorResponse("No accesses"));
+        }
+
         IReadOnlyList<Node> nodes;
         try
         {
             nodes = await _fileSystemService.GetParentsNodes(nodeId);
         }
-        catch (Exception exeption)
+        catch (Exception exception)
         {
-
-            return BadRequest(new ErrorResponse(exeption.Message));
+            return BadRequest(new ErrorResponse(exception.Message));
         }
 
         IReadOnlyList<NodeDto> nodesDto = nodes.Select(n => n.ToDto()).ToList();
@@ -66,7 +91,14 @@ public class FileSystemController : ControllerBase
     [Route("{nodeId}")]
     public async Task<IActionResult> RenameNode([FromRoute] string nodeId, [FromBody] EditNameNodeDto body)
     {
-        ValidationResult validationResult = await _editNameNodeDtoValidator.ValidateAsync(body);
+        bool hasAccess = await _accessService.HasAccess(User.GetUserId(), nodeId);
+
+        if (!hasAccess)
+        {
+            return StatusCode(403, new ErrorResponse("No accesses"));
+        }
+
+        FluentValidation.Results.ValidationResult validationResult = await _editNameNodeDtoValidator.ValidateAsync(body);
 
         if (!validationResult.IsValid)
         {
@@ -79,10 +111,10 @@ public class FileSystemController : ControllerBase
         {
             await _fileSystemService.RenameNode(node);
         }
-        catch (Exception exeption)
+        catch (Exception exception)
         {
 
-            return BadRequest(new ErrorResponse(exeption.Message));
+            return BadRequest(new ErrorResponse(exception.Message));
         }
 
         return Ok();
@@ -95,14 +127,21 @@ public class FileSystemController : ControllerBase
     [Route("{nodeId}")]
     public async Task<IActionResult> DeleteNode([FromRoute] string nodeId)
     {
+        bool hasAccess = await _accessService.HasAccess(User.GetUserId(), nodeId);
+
+        if (!hasAccess)
+        {
+            return Forbid();
+        }
+
         try
         {
             await _fileSystemService.DeleteNode(nodeId);
         }
-        catch (Exception exeption)
+        catch (Exception exception)
         {
 
-            return BadRequest(new ErrorResponse(exeption.Message));
+            return BadRequest(new ErrorResponse(exception.Message));
         }
 
         return Ok();

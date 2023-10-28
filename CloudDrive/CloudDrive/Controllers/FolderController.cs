@@ -1,34 +1,65 @@
-﻿using Application.Folders;
+﻿using Application.AccessSystem;
+using Application.FileSystem;
+using Application.Folders;
 using CloudDrive.Dto;
 using CloudDrive.Utilities;
+using Domain.AccessSystem;
 using Domain.FileSystem;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CloudDrive.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/folders")]
 public class FolderController : ControllerBase
 {
     private readonly IFoldersService _foldersService;
+    private readonly IAccessService _accessService;
+    private readonly IFileSystemService _fileSystemService;
     private readonly IValidator<CreateFolderDto> _createFolderDtoValidator;
 
-    public FolderController(IFoldersService foldersService, IValidator<CreateFolderDto> createFolderDtoValidator)
+    public FolderController(IFoldersService foldersService,
+        IAccessService accessService,
+        IFileSystemService fileSystemService,
+        IValidator<CreateFolderDto> createFolderDtoValidator)
     {
         _foldersService = foldersService;
+        _accessService = accessService;
+        _fileSystemService = fileSystemService;
         _createFolderDtoValidator = createFolderDtoValidator;
     }
 
+
     /// <summary>
-    /// Получить родительскую директорию текущего пользователя (NotImplemented)
+    /// Получить родительскую директорию текущего пользователя
     /// </summary>
     [HttpGet]
     [Route("root")]
     public async Task<IActionResult> GetRootFolder()
     {
-        throw new NotImplementedException();
+        Access access = await _accessService.GetRootAccess(User.GetUserId());
+
+        if (access is null)
+        {
+            return StatusCode(403, new ErrorResponse("No accesses"));
+        }
+
+        IReadOnlyList<Node> nodes;
+
+        try
+        {
+            nodes = await _fileSystemService.GetChildNodes(access.NodeId);
+        }
+        catch (Exception exception)
+        {
+            return BadRequest(new ErrorResponse(exception.Message));
+        }
+
+        return Ok(nodes.ToDto(access.NodeId));
     }
 
     /// <summary>
@@ -38,6 +69,13 @@ public class FolderController : ControllerBase
     [Route("")]
     public async Task<IActionResult> CreateFolder([FromBody] CreateFolderDto body)
     {
+        bool hasAccess = await _accessService.HasAccess(User.GetUserId(), body.ParentId);
+
+        if (!hasAccess)
+        {
+            return StatusCode(403, new ErrorResponse("No accesses"));
+        }
+
         ValidationResult validationResult = await _createFolderDtoValidator.ValidateAsync(body);
 
         if (!validationResult.IsValid)
@@ -51,10 +89,10 @@ public class FolderController : ControllerBase
         {
             await _foldersService.CreateFolder(folder, body.ParentId);
         }
-        catch (Exception exeption)
+        catch (Exception exception)
         {
 
-            return BadRequest(new ErrorResponse(exeption.Message));
+            return BadRequest(new ErrorResponse(exception.Message));
         }
 
         return Ok();
