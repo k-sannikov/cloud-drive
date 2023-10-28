@@ -19,6 +19,13 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("username")
             .IsRequired(true);
 
+        builder.Property(a => a.Password)
+            .HasColumnName("password")
+            .IsRequired(true);
+
+        builder.HasIndex(u => u.Username)
+            .IsUnique();
+
         builder.HasMany(u => u.Accesses)
             .WithOne(a => a.User);
     }
