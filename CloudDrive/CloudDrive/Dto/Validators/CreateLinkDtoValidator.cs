@@ -6,17 +6,17 @@ namespace CloudDrive.Dto.Validators
     {
         public CreateLinkDtoValidator()
         {
-            RuleFor(createFolderDto => createFolderDto.ParentId)
+            RuleFor(createLinkDto => createLinkDto.ParentId)
                 .NotEmpty();
 
-            RuleFor(createFolderDto => createFolderDto.Name)
+            RuleFor(createLinkDto => createLinkDto.Name)
                 .NotEmpty()
                 .MaximumLength(60);
 
-            RuleFor(createFolderDto => createFolderDto.Description)
+            RuleFor(createLinkDto => createLinkDto.Description)
                 .MaximumLength(255);
 
-            RuleFor(createFolderDto => createFolderDto.Url)
+            RuleFor(createLinkDto => createLinkDto.Url)
                 .NotEmpty()
                 .MaximumLength(255);
         }

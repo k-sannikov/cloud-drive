@@ -27,6 +27,10 @@ public class AccessConfiguration : IEntityTypeConfiguration<Access>
             .HasColumnName("is_owner")
             .IsRequired(true);
 
+        builder.Property(a => a.IsOwner)
+            .HasColumnName("is_root")
+            .IsRequired(true);
+
         builder.HasOne(a => a.User)
             .WithMany(u => u.Accesses);
     }

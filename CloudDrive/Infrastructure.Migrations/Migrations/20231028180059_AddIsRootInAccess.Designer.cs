@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231027184449_AddConstraintAccessesAndUser")]
-    partial class AddConstraintAccessesAndUser
+    [Migration("20231028180059_AddIsRootInAccess")]
+    partial class AddIsRootInAccess
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,15 +35,19 @@ namespace Infrastructure.Migrations.Migrations
 
                     b.Property<bool>("IsOwner")
                         .HasColumnType("boolean")
-                        .HasColumnName("is_owner");
+                        .HasColumnName("is_root");
+
+                    b.Property<bool>("IsRoot")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("NodeId")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("node_id");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id");
@@ -55,12 +59,14 @@ namespace Infrastructure.Migrations.Migrations
 
             modelBuilder.Entity("Domain.Auth.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
                         .HasColumnName("user_id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("password");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -68,6 +74,9 @@ namespace Infrastructure.Migrations.Migrations
                         .HasColumnName("username");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("user", (string)null);
                 });

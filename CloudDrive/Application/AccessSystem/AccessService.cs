@@ -33,7 +33,7 @@ public class AccessService : IAccessService
         await _accessRepository.AddAccess(access);
     }
 
-    public async Task DeleteAccess(int userId, string nodeId)
+    public async Task DeleteAccess(string userId, string nodeId)
     {
         Access access = await _accessRepository.GetByUserIdAndNodeId(userId, nodeId);
 
@@ -50,7 +50,7 @@ public class AccessService : IAccessService
         _accessRepository.DeleteAccess(access);
     }
 
-    public async Task<bool> HasAccess(int userId, string nodeId)
+    public async Task<bool> HasAccess(string userId, string nodeId)
     {
         IReadOnlyList<Node> nodes = await _fileSystemRepository.GetParentsNodes(nodeId);
 
@@ -63,5 +63,10 @@ public class AccessService : IAccessService
         Access access = accesses.Where(a => a.UserId == userId).FirstOrDefault();
 
         return access is not null;
+    }
+
+    public async Task<Access> GetRootAccess(string userId)
+    {
+        return await _accessRepository.GetRootByUserId(userId);
     }
 }

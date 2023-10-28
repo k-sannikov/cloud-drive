@@ -24,10 +24,17 @@ public class AccessRepository : IAccessRepository
         return await _entities.FindAsync(accessId);
     }
 
-    public async Task<Access> GetByUserIdAndNodeId(int userId, string nodeId)
+    public async Task<Access> GetByUserIdAndNodeId(string userId, string nodeId)
     {
         return await _entities
             .Where(a => a.UserId == userId && a.NodeId == nodeId)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<Access> GetRootByUserId(string userId)
+    {
+        return await _entities
+            .Where(a => a.UserId == userId && a.IsRoot)
             .FirstOrDefaultAsync();
     }
 

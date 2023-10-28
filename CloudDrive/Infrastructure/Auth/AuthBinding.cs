@@ -12,5 +12,6 @@ public static class AuthBinding
 
     public static void AddAuthServices(this IServiceCollection services)
     {
+        services.AddScoped<IAuthService, AuthService>();
     }
 }
