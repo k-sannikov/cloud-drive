@@ -113,7 +113,7 @@ public class FileSystemRepository : IFileSystemRepository
         EagerResult<IReadOnlyList<IRecord>> responseMultiDelete = await _driver.ExecutableQuery(queryMultiDelete)
             .ExecuteAsync();
 
-        string querySingleDelete = $"MATCH (node) WHERE node.id = \"{nodeId}\" DELETE node";
+        string querySingleDelete = $"MATCH (node) WHERE node.id = \"{nodeId}\" DETACH DELETE node";
 
         EagerResult<IReadOnlyList<IRecord>> responseSingleDelete = await _driver.ExecutableQuery(querySingleDelete)
             .ExecuteAsync();

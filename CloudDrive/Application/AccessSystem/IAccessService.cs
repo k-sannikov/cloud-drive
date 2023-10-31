@@ -8,4 +8,5 @@ public interface IAccessService
     Task DeleteAccess(string userId, string nodeId);
     Task<bool> HasAccess(string userId, string nodeId);
     Task<Access> GetRootAccess(string userId);
+    Task<List<Access>> GetByNodeId(string nodeId);
 }

@@ -1,13 +1,14 @@
 ﻿using Application.Auth;
 using Application.Foundations;
+using CloudDrive.Auth;
 using CloudDrive.Dto;
 using CloudDrive.Utilities;
 using Domain.Auth;
 using FluentValidation;
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace CloudDrive.Controllers
@@ -58,8 +59,8 @@ namespace CloudDrive.Controllers
         }
 
         [HttpPost]
-        [Route("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto body)
+        [Route("token")]
+        public async Task<IActionResult> Token([FromBody] LoginDto body)
         {
             ValidationResult validationResult = await _loginDtoValidator.ValidateAsync(body);
 
@@ -79,16 +80,29 @@ namespace CloudDrive.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Expired, user.Username),
             };
 
-            ClaimsIdentity identity = new(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            ClaimsPrincipal principial = new(identity);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principial, new AuthenticationProperties()
-            {
-                IsPersistent = true
-            }); ;
+            ClaimsIdentity identity = new(claims, "Token");
 
-            return Ok();
+            var now = DateTime.UtcNow;
+
+            // создаем JWT-токен
+            var jwt = new JwtSecurityToken(
+                    issuer: AuthOptions.ISSUER,
+                    audience: AuthOptions.AUDIENCE,
+                    notBefore: now,
+                    claims: identity.Claims,
+                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            var response = new
+            {
+                access_token = encodedJwt,
+            };
+
+            return Ok(response);
         }
     }
 }

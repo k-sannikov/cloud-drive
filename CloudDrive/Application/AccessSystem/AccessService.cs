@@ -69,4 +69,9 @@ public class AccessService : IAccessService
     {
         return await _accessRepository.GetRootByUserId(userId);
     }
+
+    public async Task<List<Access>> GetByNodeId(string nodeId)
+    {
+        return await _accessRepository.GetByNodeIds(new List<string>() { nodeId });
+    }
 }

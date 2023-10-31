@@ -1,14 +1,18 @@
-﻿using Domain.FileSystem;
+﻿using Application.AccessSystem;
+using Domain.AccessSystem;
+using Domain.FileSystem;
 
 namespace Application.FileSystem;
 
 public class FileSystemService : IFileSystemService
 {
     private readonly IFileSystemRepository _fileSystemRepository;
+    private readonly IAccessService _accessService;
 
-    public FileSystemService(IFileSystemRepository fileSystemRepository)
+    public FileSystemService(IFileSystemRepository fileSystemRepository, IAccessService accessService)
     {
         _fileSystemRepository = fileSystemRepository;
+        _accessService = accessService;
     }
 
     public async Task<T> GetNode<T>(string nodeId) where T : Node, new()
@@ -41,6 +45,13 @@ public class FileSystemService : IFileSystemService
         {
             throw new Exception($"Node with id: {node.Id} not exist");
         }
+
+        List<Access> access = await _accessService.GetByNodeId(nodeId);
+        if (access.FirstOrDefault().IsRoot)
+        {
+            throw new Exception($"Cannot delete the root directory");
+        }
+
         await _fileSystemRepository.DeleteNodeWithChildren(nodeId);
     }
 

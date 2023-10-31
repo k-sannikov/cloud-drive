@@ -1,3 +1,4 @@
+using CloudDrive.Auth;
 using CloudDrive.Dto;
 using FluentValidation;
 using Infrastructure;
@@ -5,9 +6,9 @@ using Infrastructure.AccessSystem;
 using Infrastructure.Auth;
 using Infrastructure.FileSystem;
 using Infrastructure.Folders;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 
 namespace CloudDrive
 {
@@ -37,12 +38,39 @@ namespace CloudDrive
                     }
                 );
 
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
+                var jwtSecurityScheme = new OpenApiSecurityScheme
+                {
+                    BearerFormat = "JWT",
+                    Name = "JWT Authentication",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = JwtBearerDefaults.AuthenticationScheme,
+                    Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
 
+                    Reference = new OpenApiReference
+                    {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+
+                c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
             });
-
 
             services.AddFileSystemRepositories();
             services.AddFileSystemServices();
@@ -65,22 +93,30 @@ namespace CloudDrive
             services.AddAuthRepositories();
             services.AddAuthServices();
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(option =>
-            {
-                option.Cookie.Name = "Lufi";
-                option.ExpireTimeSpan = TimeSpan.FromMinutes(15);
-                option.SlidingExpiration = true;
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                    {
+                        options.RequireHttpsMetadata = false;
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidIssuer = AuthOptions.ISSUER,
 
-                option.Events.OnRedirectToAccessDenied =
-                option.Events.OnRedirectToLogin = c =>
-                {
-                    c.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    return Task.FromResult<object>(null);
-                };
-            });
+                            ValidateAudience = true,
+                            ValidAudience = AuthOptions.AUDIENCE,
 
+                            ValidateLifetime = true,
+
+                            IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                            ValidateIssuerSigningKey = true,
+
+                            RequireExpirationTime = true,
+                        };
+                    });
 
             var app = builder.Build();
+
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -91,11 +127,16 @@ namespace CloudDrive
 
             app.UseHttpsRedirection();
 
+            app.UseCors(builder =>
+            {
+                builder.WithOrigins("http://localhost:3000");
+                builder.AllowCredentials();
+                builder.AllowAnyHeader();
+                builder.AllowAnyMethod();
+            });
+
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseCookiePolicy();
-
 
             app.MapControllers();
 
