@@ -24,6 +24,16 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("password")
             .IsRequired(true);
 
+        builder.Property(a => a.RefreshToken)
+            .HasColumnName("refresh_token")
+            .HasDefaultValue("")
+            .IsRequired(true);
+
+        builder.Property(a => a.RefreshTokenExpiryTime)
+            .HasColumnName("refresh_token_expiry_time")
+            .IsRequired(true)
+            .HasDefaultValueSql("now()");
+
         builder.HasIndex(u => u.Username)
             .IsUnique();
 

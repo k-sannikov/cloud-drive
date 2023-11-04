@@ -33,6 +33,13 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync();
     }
 
+    public async Task<User> GetByRefreshToken(string token)
+    {
+        return await _entities
+            .Where(u => u.RefreshToken == token)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task AddUser(User user)
     {
         await _entities.AddAsync(user);

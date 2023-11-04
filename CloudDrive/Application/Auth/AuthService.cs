@@ -54,11 +54,16 @@ public class AuthService : IAuthService
         return await _userRepository.GetByUsernameAndPassword(username, password);
     }
 
+    public async Task<User> GetUser(string token)
+    {
+        return await _userRepository.GetByRefreshToken(token);
+    }
+
     private static string Hash(string str)
     {
         SHA256 sha256 = SHA256.Create();
         byte[] hashValue;
-        UTF8Encoding objUtf8 = new UTF8Encoding();
+        UTF8Encoding objUtf8 = new();
         hashValue = sha256.ComputeHash(objUtf8.GetBytes(str));
 
         return Convert.ToBase64String(hashValue);

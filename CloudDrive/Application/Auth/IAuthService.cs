@@ -6,4 +6,5 @@ public interface IAuthService
 {
     Task RegisterUser(User user);
     Task<User> GetUser(string username, string password);
+    Task<User> GetUser(string token);
 }

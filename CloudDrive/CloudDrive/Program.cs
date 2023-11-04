@@ -72,6 +72,11 @@ namespace CloudDrive
                 });
             });
 
+            AuthSettings authSettings = configuration.GetSection("Auth").Get<AuthSettings>();
+            services.AddScoped(sp => authSettings);
+
+            services.AddScoped<ITokenService, TokenService>();
+
             services.AddFileSystemRepositories();
             services.AddFileSystemServices();
             services.AddFoldersServices();
@@ -82,6 +87,7 @@ namespace CloudDrive
             services.AddValidatorsFromAssemblyContaining<EditNameNodeDto>();
             services.AddValidatorsFromAssemblyContaining<RegisterDto>();
             services.AddValidatorsFromAssemblyContaining<LoginDto>();
+            services.AddValidatorsFromAssemblyContaining<RefreshTokenDto>();
 
             services.Configure<Neo4jSettings>(configuration.GetSection("Neo4j"));
 
@@ -100,14 +106,14 @@ namespace CloudDrive
                         options.TokenValidationParameters = new TokenValidationParameters
                         {
                             ValidateIssuer = true,
-                            ValidIssuer = AuthOptions.ISSUER,
+                            ValidIssuer = authSettings.Issuer,
 
                             ValidateAudience = true,
-                            ValidAudience = AuthOptions.AUDIENCE,
+                            ValidAudience = authSettings.Audience,
 
                             ValidateLifetime = true,
 
-                            IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                            IssuerSigningKey = TokenService.GetSymmetricSecurityKey(authSettings.Key),
                             ValidateIssuerSigningKey = true,
 
                             RequireExpirationTime = true,

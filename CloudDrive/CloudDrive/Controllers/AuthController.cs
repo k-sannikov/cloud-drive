@@ -7,9 +7,6 @@ using Domain.Auth;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace CloudDrive.Controllers
 {
@@ -19,18 +16,26 @@ namespace CloudDrive.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAuthService _authService;
+        private readonly ITokenService _tokenService;
         private readonly IValidator<RegisterDto> _registerDtoValidator;
         private readonly IValidator<LoginDto> _loginDtoValidator;
+        private readonly IValidator<RefreshTokenDto> _refreshTokenDtoValidator;
+
+        const int _refreshTokenExpiredTime = 20;
 
         public AuthController(IUnitOfWork unitOfWork,
             IAuthService authService,
+            ITokenService tokenService,
             IValidator<RegisterDto> registerDtoValidator,
-            IValidator<LoginDto> loginDtoValidator)
+            IValidator<LoginDto> loginDtoValidator,
+            IValidator<RefreshTokenDto> refreshTokenDtoValidator)
         {
             _unitOfWork = unitOfWork;
             _authService = authService;
+            _tokenService = tokenService;
             _registerDtoValidator = registerDtoValidator;
             _loginDtoValidator = loginDtoValidator;
+            _refreshTokenDtoValidator = refreshTokenDtoValidator;
         }
 
         [HttpPost]
@@ -76,30 +81,54 @@ namespace CloudDrive.Controllers
                 return BadRequest(new ErrorResponse("Username or password not exist"));
             }
 
-            List<Claim> claims = new ()
+            string jwtToken = _tokenService.GenerateJwtToken(user);
+            string refreshToken = _tokenService.GenerateRefreshToken();
+
+            user.SetRefreshToken(refreshToken, _refreshTokenExpiredTime);
+            _unitOfWork.Commit();
+
+            TokenDto response = new()
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Expired, user.Username),
+                AccessToken = jwtToken,
+                RefreshToken = refreshToken
             };
 
-            ClaimsIdentity identity = new(claims, "Token");
+            return Ok(response);
+        }
 
-            var now = DateTime.UtcNow;
+        [HttpPost]
+        [Route("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenDto body)
+        {
+            ValidationResult validationResult = await _refreshTokenDtoValidator.ValidateAsync(body);
 
-            // создаем JWT-токен
-            var jwt = new JwtSecurityToken(
-                    issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
-                    notBefore: now,
-                    claims: identity.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-
-            var response = new
+            if (!validationResult.IsValid)
             {
-                access_token = encodedJwt,
+                return BadRequest(new ErrorResponse(validationResult.ToDictionary()));
+            }
+
+            User user = await _authService.GetUser(body.RefreshToken);
+
+            if (user is null)
+            {
+                return BadRequest(new ErrorResponse("Refresh token not exist"));
+            }
+
+            if (user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            {
+                return BadRequest(new ErrorResponse("Refresh token expired"));
+            }
+
+            string jwtToken = _tokenService.GenerateJwtToken(user);
+            string refreshToken = _tokenService.GenerateRefreshToken();
+
+            user.SetRefreshToken(refreshToken, _refreshTokenExpiredTime);
+            _unitOfWork.Commit();
+
+            TokenDto response = new()
+            {
+                AccessToken = jwtToken,
+                RefreshToken = refreshToken
             };
 
             return Ok(response);
