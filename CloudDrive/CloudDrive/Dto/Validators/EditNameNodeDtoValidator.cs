@@ -2,7 +2,7 @@
 
 namespace CloudDrive.Dto.Validators
 {
-    public class EditNameNodeDtoValidator : AbstractValidator<EditNameNodeDto>
+    public class EditNameNodeDtoValidator : AbstractValidator<EditFolderDto>
     {
         public EditNameNodeDtoValidator()
         {

@@ -17,15 +17,12 @@ public class FileSystemController : ControllerBase
 {
     private readonly IFileSystemService _fileSystemService;
     private readonly IAccessService _accessService;
-    private readonly IValidator<EditNameNodeDto> _editNameNodeDtoValidator;
 
     public FileSystemController(IFileSystemService fileSystemService,
-        IAccessService accessService,
-        IValidator<EditNameNodeDto> editNameNodeDtoValidator)
+        IAccessService accessService)
     {
         _fileSystemService = fileSystemService;
         _accessService = accessService;
-        _editNameNodeDtoValidator = editNameNodeDtoValidator;
     }
 
     /// <summary>
@@ -82,42 +79,6 @@ public class FileSystemController : ControllerBase
         IReadOnlyList<NodeDto> nodesDto = nodes.Select(n => n.ToDto()).ToList();
 
         return Ok(nodesDto);
-    }
-
-    /// <summary>
-    /// Переименовать ноду
-    /// </summary>
-    [HttpPut]
-    [Route("{nodeId}")]
-    public async Task<IActionResult> RenameNode([FromRoute] string nodeId, [FromBody] EditNameNodeDto body)
-    {
-        bool hasAccess = await _accessService.HasAccess(User.GetUserId(), nodeId);
-
-        if (!hasAccess)
-        {
-            return StatusCode(403, new ErrorResponse("No accesses"));
-        }
-
-        FluentValidation.Results.ValidationResult validationResult = await _editNameNodeDtoValidator.ValidateAsync(body);
-
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(new ErrorResponse(validationResult.ToDictionary()));
-        }
-
-        Node node = body.ToDomain(nodeId);
-
-        try
-        {
-            await _fileSystemService.RenameNode(node);
-        }
-        catch (Exception exception)
-        {
-
-            return BadRequest(new ErrorResponse(exception.Message));
-        }
-
-        return Ok();
     }
 
     /// <summary>

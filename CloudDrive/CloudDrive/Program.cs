@@ -84,7 +84,7 @@ namespace CloudDrive
             services.AddValidatorsFromAssemblyContaining<CreateFolderDto>();
             services.AddValidatorsFromAssemblyContaining<CreateLinkDto>();
             services.AddValidatorsFromAssemblyContaining<EditLinkDto>();
-            services.AddValidatorsFromAssemblyContaining<EditNameNodeDto>();
+            services.AddValidatorsFromAssemblyContaining<EditFolderDto>();
             services.AddValidatorsFromAssemblyContaining<RegisterDto>();
             services.AddValidatorsFromAssemblyContaining<LoginDto>();
             services.AddValidatorsFromAssemblyContaining<RefreshTokenDto>();

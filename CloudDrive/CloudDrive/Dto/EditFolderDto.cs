@@ -1,6 +1,6 @@
 ﻿namespace CloudDrive.Dto;
 
-public class EditNameNodeDto
+public class EditFolderDto
 {
     public string Name { get; set; }
 }

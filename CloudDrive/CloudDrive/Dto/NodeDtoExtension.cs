@@ -24,9 +24,9 @@ public static class NodeDtoExtension
         };
     }
 
-    public static Node ToDomain(this EditNameNodeDto body, string id)
+    public static Folder ToDomain(this EditFolderDto body, string id)
     {
-        return new Node()
+        return new Folder()
         {
             Id = id,
             Name = body.Name,
