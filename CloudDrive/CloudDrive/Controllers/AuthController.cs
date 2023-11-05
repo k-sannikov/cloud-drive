@@ -6,6 +6,7 @@ using CloudDrive.Utilities;
 using Domain.Auth;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CloudDrive.Controllers
@@ -132,6 +133,14 @@ namespace CloudDrive.Controllers
             };
 
             return Ok(response);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("check")]
+        public IActionResult Check()
+        {
+            return Ok();
         }
     }
 }
