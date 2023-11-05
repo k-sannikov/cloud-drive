@@ -39,6 +39,9 @@ namespace CloudDrive.Controllers
             _refreshTokenDtoValidator = refreshTokenDtoValidator;
         }
 
+        /// <summary>
+        /// Регистрация пользователя
+        /// </summary>
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto body)
@@ -64,6 +67,9 @@ namespace CloudDrive.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Получить токен
+        /// </summary>
         [HttpPost]
         [Route("token")]
         public async Task<IActionResult> Token([FromBody] LoginDto body)
@@ -97,6 +103,9 @@ namespace CloudDrive.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Обновить токен
+        /// </summary>
         [HttpPost]
         [Route("refresh")]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenDto body)
@@ -135,6 +144,9 @@ namespace CloudDrive.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Проверить авторизацию пользователя
+        /// </summary>
         [Authorize]
         [HttpGet]
         [Route("check")]

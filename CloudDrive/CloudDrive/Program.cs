@@ -9,6 +9,7 @@ using Infrastructure.Folders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 namespace CloudDrive
 {
@@ -16,7 +17,7 @@ namespace CloudDrive
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            WebApplicationBuilder builder = NewMethod(args);
 
             IConfiguration configuration = builder.Configuration;
             IServiceCollection services = builder.Services;
@@ -38,7 +39,11 @@ namespace CloudDrive
                     }
                 );
 
-                var jwtSecurityScheme = new OpenApiSecurityScheme
+                string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+
+                OpenApiSecurityScheme jwtSecurityScheme = new()
                 {
                     BearerFormat = "JWT",
                     Name = "JWT Authentication",
@@ -101,27 +106,26 @@ namespace CloudDrive
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        options.RequireHttpsMetadata = false;
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            ValidateIssuer = true,
-                            ValidIssuer = authSettings.Issuer,
+                        ValidateIssuer = true,
+                        ValidIssuer = authSettings.Issuer,
 
-                            ValidateAudience = true,
-                            ValidAudience = authSettings.Audience,
+                        ValidateAudience = true,
+                        ValidAudience = authSettings.Audience,
 
-                            ValidateLifetime = true,
+                        ValidateLifetime = true,
 
-                            IssuerSigningKey = TokenService.GetSymmetricSecurityKey(authSettings.Key),
-                            ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = TokenService.GetSymmetricSecurityKey(authSettings.Key),
+                        ValidateIssuerSigningKey = true,
 
-                            RequireExpirationTime = true,
-                        };
-                    });
+                        RequireExpirationTime = true,
+                    };
+                });
 
-            var app = builder.Build();
-
+            WebApplication app = builder.Build();
 
 
             // Configure the HTTP request pipeline.
@@ -147,6 +151,11 @@ namespace CloudDrive
             app.MapControllers();
 
             app.Run();
+        }
+
+        private static WebApplicationBuilder NewMethod(string[] args)
+        {
+            return WebApplication.CreateBuilder(args);
         }
     }
 }

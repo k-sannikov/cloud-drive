@@ -102,7 +102,7 @@ public class FolderController : ControllerBase
     }
 
     /// <summary>
-    /// Редактировать папку
+    /// Редактировать директорию
     /// </summary>
     [HttpPut]
     [Route("{nodeId}")]
