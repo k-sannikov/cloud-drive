@@ -42,7 +42,10 @@ public class FileSystemService : IFileSystemService
         }
 
         List<Access> access = await _accessService.GetByNodeId(nodeId);
-        if (access.FirstOrDefault().IsRoot)
+
+        bool isRoot = access.FirstOrDefault()?.IsRoot ?? false;
+
+        if (isRoot)
         {
             throw new Exception($"Cannot delete the root directory");
         }
