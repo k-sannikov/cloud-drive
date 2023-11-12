@@ -13,7 +13,7 @@ public static class ConfigureServices
 {
     public static void AddDatabaseFoundations(this IServiceCollection services, IConfiguration configuration)
     {
-        string connectionString = configuration.GetConnectionString("LocalPostgreSQL");
+        string connectionString = configuration.GetConnectionString("PostgreSQL");
 
         services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
