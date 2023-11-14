@@ -52,17 +52,20 @@ public class FolderController : ControllerBase
         }
 
         IReadOnlyList<Node> nodes;
+        Node node;
 
         try
         {
             nodes = await _fileSystemService.GetChildNodes(access.NodeId);
+            node = (await _fileSystemService.GetNode<Folder>(access.NodeId))
+                ?? throw new Exception("Root node not found");
         }
         catch (Exception exception)
         {
             return BadRequest(new ErrorResponse(exception.Message));
         }
 
-        return Ok(nodes.ToDto(access.NodeId));
+        return Ok(nodes.ToDto(node));
     }
 
     /// <summary>

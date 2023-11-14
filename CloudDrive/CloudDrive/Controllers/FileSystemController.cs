@@ -2,11 +2,10 @@
 using Application.FileSystem;
 using CloudDrive.Dto;
 using CloudDrive.Utilities;
+using Domain.AccessSystem;
 using Domain.FileSystem;
-using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace CloudDrive.Controllers;
 
@@ -40,16 +39,20 @@ public class FileSystemController : ControllerBase
         }
 
         IReadOnlyList<Node> nodes;
+        Node node;
+
         try
         {
             nodes = await _fileSystemService.GetChildNodes(nodeId);
+            node = (await _fileSystemService.GetNode<Folder>(nodeId))
+                ?? throw new Exception("Root node not found");
         }
         catch (Exception exception)
         {
             return BadRequest(new ErrorResponse(exception.Message));
         }
 
-        return Ok(nodes.ToDto(nodeId));
+        return Ok(nodes.ToDto(node));
     }
 
     /// <summary>

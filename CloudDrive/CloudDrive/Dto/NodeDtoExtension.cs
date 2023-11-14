@@ -57,11 +57,12 @@ public static class NodeDtoExtension
         };
     }
 
-    public static NodeListDto ToDto(this IReadOnlyList<Node> nodes, string parentId)
+    public static NodeListDto ToDto(this IReadOnlyList<Node> nodes, Node parent)
     {
         return new NodeListDto()
         {
-            ParentId = parentId,
+            ParentId = parent.Id,
+            Name = parent.Name,
             Nodes = nodes.Select(n => n.ToDto()).ToList(),
         };
     }
