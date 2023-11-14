@@ -46,6 +46,24 @@ public class FileSystemRepository : IFileSystemRepository
         return response.Result.Select(r => ToNode<T>(r)).ToList();
     }
 
+    public async Task RenameNode(string nodeId, string newName)
+    {
+        string query =
+            $"MATCH (node)" +
+            $"WHERE node.id = \"{nodeId}\"" +
+            $"SET node.name = \"{newName}\"";
+
+        EagerResult<IReadOnlyList<IRecord>> response = await _driver.ExecutableQuery(query)
+            .ExecuteAsync();
+
+        ICounters counters = response.Summary.Counters;
+
+        if (counters.PropertiesSet == 0)
+        {
+            throw new Exception("Node not rename");
+        }
+    }
+
     public async Task EditNode<T>(Node node) where T : Node, new()
     {
         string body = Serialize((T)node);

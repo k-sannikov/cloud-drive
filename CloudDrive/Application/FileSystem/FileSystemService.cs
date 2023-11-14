@@ -33,6 +33,11 @@ public class FileSystemService : IFileSystemService
         await _fileSystemRepository.AddNodeWithRelation(newNode, parentId);
     }
 
+    public async Task RenameNode(Node modifiedNode)
+    {
+        await _fileSystemRepository.RenameNode(modifiedNode.Id, modifiedNode.Name);
+    }
+
     public async Task DeleteNode(string nodeId)
     {
         Node node = await GetNode<Node>(nodeId);
