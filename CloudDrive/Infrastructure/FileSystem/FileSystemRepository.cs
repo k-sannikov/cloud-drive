@@ -185,7 +185,7 @@ public class FileSystemRepository : IFileSystemRepository
         INode rawNode = (INode)record.Values.First().Value;
 
         string type = rawNode.Labels[0];
-        node.Type = (NodeType)Enum.Parse(typeof(NodeType), type);
+        node.Type = type;
 
         return node;
     }

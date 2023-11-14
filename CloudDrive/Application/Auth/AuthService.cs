@@ -33,7 +33,8 @@ public class AuthService : IAuthService
         {
             Id = Guid.NewGuid().ToString(),
             Name = "Мой диск",
-            Type = NodeType.Folder,
+            Type = NodeType.Folder.ToString(),
+
         };
         await _fileSystemRepository.AddNode(rootNode);
 

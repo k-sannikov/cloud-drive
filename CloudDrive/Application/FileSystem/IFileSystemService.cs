@@ -8,7 +8,7 @@ public interface IFileSystemService
     Task<IReadOnlyList<Node>> GetChildNodes(string nodeId);
     Task<IReadOnlyList<Node>> GetParentsNodes(string nodeId);
     Task CreateNode(string parentId, Node newNode);
-    Task RenameNode(Node modifiedNode);
+    Task RenameNode(string id, string name);
     Task DeleteNode(string nodeId);
     Task EditNode<T>(Node modifiedNode) where T : Node, new();
 }

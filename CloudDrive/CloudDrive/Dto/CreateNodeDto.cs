@@ -1,13 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿namespace CloudDrive.Dto;
 
-namespace Domain.FileSystem;
-
-public class Node
+public class CreateNodeDto
 {
+    public string ParentId { get; set; }
     public string Id { get; set; }
-
     public string Name { get; set; }
-
-    [JsonIgnore]
     public string Type { get; set; }
 }

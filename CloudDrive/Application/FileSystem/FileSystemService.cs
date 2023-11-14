@@ -33,9 +33,9 @@ public class FileSystemService : IFileSystemService
         await _fileSystemRepository.AddNodeWithRelation(newNode, parentId);
     }
 
-    public async Task RenameNode(Node modifiedNode)
+    public async Task RenameNode(string id, string name)
     {
-        await _fileSystemRepository.RenameNode(modifiedNode.Id, modifiedNode.Name);
+        await _fileSystemRepository.RenameNode(id, name);
     }
 
     public async Task DeleteNode(string nodeId)
@@ -43,7 +43,7 @@ public class FileSystemService : IFileSystemService
         Node node = await GetNode<Node>(nodeId);
         if (node is null)
         {
-            throw new Exception($"Node with id: {node.Id} not exist");
+            throw new Exception($"Node with id: {nodeId} not exist");
         }
 
         List<Access> access = await _accessService.GetByNodeId(nodeId);

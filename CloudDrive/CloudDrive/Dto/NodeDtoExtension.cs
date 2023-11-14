@@ -20,7 +20,7 @@ public static class NodeDtoExtension
         {
             Id = Guid.NewGuid().ToString(),
             Name = body.Name,
-            Type = NodeType.Folder,
+            Type = NodeType.Folder.ToString(),
         };
     }
 
@@ -39,7 +39,7 @@ public static class NodeDtoExtension
         {
             Id = Guid.NewGuid().ToString(),
             Name = body.Name,
-            Type = NodeType.Link,
+            Type = NodeType.Link.ToString(),
             Description = body.Description,
             Url = body.Url,
         };
@@ -51,9 +51,19 @@ public static class NodeDtoExtension
         {
             Id = id,
             Name = body.Name,
-            Type = NodeType.Link,
+            Type = NodeType.Link.ToString(),
             Description = body.Description,
             Url = body.Url,
+        };
+    }
+
+    public static Node ToDomain(this CreateNodeDto body)
+    {
+        return new Node()
+        {
+            Id = body.Id,
+            Name = body.Name,
+            Type = body.Type,
         };
     }
 

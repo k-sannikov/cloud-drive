@@ -1,3 +1,4 @@
+using Application.ProxyServices;
 using CloudDrive.Auth;
 using CloudDrive.Dto;
 using FluentValidation;
@@ -6,6 +7,7 @@ using Infrastructure.AccessSystem;
 using Infrastructure.Auth;
 using Infrastructure.FileSystem;
 using Infrastructure.Folders;
+using Infrastructure.ProxyServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -75,12 +77,49 @@ namespace CloudDrive
                         Array.Empty<string>()
                     }
                 });
+
+
+                c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
+                {
+                    Description = "The Api Key to access the Api",
+                    Type = SecuritySchemeType.ApiKey,
+                    Name = "x-api-key",
+                    In = ParameterLocation.Header,
+                    Scheme = "ApiKeyScheme"
+                });
+
+                var scheme = new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "ApiKey"
+                    },
+                    In = ParameterLocation.Header,
+                };
+
+                var requirement = new OpenApiSecurityRequirement
+                {
+                    { scheme, new List<string>() }
+                };
+
+                c.AddSecurityRequirement(requirement);
+
             });
+
+            services.AddHttpClient();
 
             AuthSettings authSettings = configuration.GetSection("Auth").Get<AuthSettings>();
             services.AddScoped(sp => authSettings);
 
+            ProxySettings proxySettings = configuration.GetSection("Proxy").Get<ProxySettings>();
+            services.AddScoped(sp => proxySettings);
+
+            services.Configure<Neo4jSettings>(configuration.GetSection("Neo4j"));
+
             services.AddScoped<ITokenService, TokenService>();
+
+            services.AddScoped<ApiKeyAuthFilter>();
 
             services.AddFileSystemRepositories();
             services.AddFileSystemServices();
@@ -94,8 +133,6 @@ namespace CloudDrive
             services.AddValidatorsFromAssemblyContaining<LoginDto>();
             services.AddValidatorsFromAssemblyContaining<RefreshTokenDto>();
 
-            services.Configure<Neo4jSettings>(configuration.GetSection("Neo4j"));
-
             services.AddDatabaseFoundations(configuration);
 
             services.AddAccessSystemRepositories();
@@ -103,6 +140,8 @@ namespace CloudDrive
 
             services.AddAuthRepositories();
             services.AddAuthServices();
+
+            services.AddProxyServices();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
