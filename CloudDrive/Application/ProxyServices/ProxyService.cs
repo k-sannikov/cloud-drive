@@ -44,12 +44,21 @@ public class ProxyService : IProxyService
 
                 request.Headers.Add("X-Api-Key", service.ApiKey);
 
-                HttpResponseMessage response = _httpClient.Send(request);
+                HttpResponseMessage response;
+
+                try
+                {
+                    response = _httpClient.Send(request);
+                }
+                catch (Exception)
+                {
+                    throw new Exception("Connection error");
+                }
 
                 return response;
             }
         }
-        return null;
+        throw new Exception("Request not resolve");
     }
 
     private static HttpMethod GetMethod(string method)

@@ -14,6 +14,10 @@ services:
     ports:
       - "5033:80"
       - "7167:443"
+    networks:
+      cloud_drive_network:
+        aliases:
+          - cloud-drive.dev
     volumes:
       - ./cloud_drive/https:/https
     links:
@@ -21,12 +25,14 @@ services:
       - neo4j
 
   migrations:
-    container_name: migrations
+    container_name: cloud_drive_migrations
     build:
       context: ..
       dockerfile: ./Infrastructure.Migrations/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
+    networks:
+      - cloud_drive_network
     depends_on:
       postgres:
         condition: service_healthy
@@ -34,7 +40,7 @@ services:
       - postgres
 
   postgres:
-    container_name: postgres
+    container_name: cloud_drive_postgres
     image: postgres:13
     environment:
       POSTGRES_USER: postgres
@@ -42,6 +48,8 @@ services:
       PGDATA: "/var/lib/postgresql/data/pgdata"
     ports:
       - "5432:5432"
+    networks:
+      - cloud_drive_network
     volumes:
       - ./postgres/entrypoint-initdb:/docker-entrypoint-initdb.d
       - ./postgres/data:/var/lib/postgresql/data
@@ -53,18 +61,20 @@ services:
       start_period: 10s
 
   pgadmin:
-    container_name: pgadmin
+    container_name: cloud_drive_pgadmin
     image: dpage/pgadmin4:7.8
     environment:
       PGADMIN_DEFAULT_EMAIL: postgres@mail.com
       PGADMIN_DEFAULT_PASSWORD: 123
     ports:
       - "5050:80"
+    networks:
+      - cloud_drive_network
     links:
       - postgres
 
   neo4j:
-    container_name: neo4j
+    container_name: cloud_drive_neo4j
     image: neo4j:4.2.3
     volumes:
       - ./neo4j/data:/data
@@ -76,3 +86,9 @@ services:
       NEO4J_AUTH: neo4j/123 
     ports:
       - "7474:7474"
+    networks:
+      - cloud_drive_network
+
+networks:
+    cloud_drive_network:
+        name: "cloud_drive_network"
