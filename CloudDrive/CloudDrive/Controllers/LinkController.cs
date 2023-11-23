@@ -53,7 +53,6 @@ public class LinkController : ControllerBase
         }
         catch (Exception exception)
         {
-
             return BadRequest(new ErrorResponse(exception.Message));
         }
 

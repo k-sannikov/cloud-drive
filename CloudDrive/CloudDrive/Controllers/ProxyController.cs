@@ -1,5 +1,6 @@
 ﻿using Application.AccessSystem;
 using Application.ProxyServices;
+using CloudDrive.Dto;
 using CloudDrive.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,13 +9,6 @@ using System.Text.Json;
 
 namespace CloudDrive.Controllers
 {
-    //TODO: вынести в отдельный файл
-    public class ProxyDto
-    {
-        public string Id { get; set; }
-        public string ParentId { get; set; }
-    }
-
     [ApiController]
     [Authorize]
     [Route("api")]
@@ -22,11 +16,13 @@ namespace CloudDrive.Controllers
     {
         private readonly IAccessService _accessService;
         private readonly IProxyService _proxyService;
+        private readonly ProxySettings _proxySettings;
 
-        public ProxyController(IAccessService accessService, IProxyService proxyService)
+        public ProxyController(IAccessService accessService, IProxyService proxyService, ProxySettings proxySettings)
         {
             _accessService = accessService;
             _proxyService = proxyService;
+            _proxySettings = proxySettings;
         }
 
         [HttpPost]
@@ -51,12 +47,41 @@ namespace CloudDrive.Controllers
                 json = body.GetRawText();
             }
 
-            HttpResponseMessage response = _proxyService.ResoveRequest(key, id, json);
+            HttpResponseMessage response;
+
+            try
+            {
+                response = _proxyService.ResoveRequest(key, id, json);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new ErrorResponse(exception.Message));
+            }
 
             string responseJson = await response.Content.ReadAsStringAsync();
 
             Response.Headers.Add("Content-Type", "application/json");
-            return StatusCode((int) response.StatusCode, responseJson);
+            return StatusCode((int)response.StatusCode, responseJson);
+        }
+
+        [HttpGet]
+        [Route("proxy/settings")]
+        public IActionResult GetProxySettings()
+        {
+            List<ProxyServiceDto> settings = new();
+
+            foreach (ProxyServiceSettings service in _proxySettings.Services)
+            {
+                ProxyServiceDto settingsDto = new()
+                {
+                    UiUrl = service.UiUrl,
+                    Label = service.Label,
+                    Icon = service.Icon,
+                };
+
+                settings.Add(settingsDto);
+            }
+            return Ok(settings);
         }
     }
 }
