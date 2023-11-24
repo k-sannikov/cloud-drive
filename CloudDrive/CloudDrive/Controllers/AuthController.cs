@@ -1,7 +1,8 @@
 ﻿using Application.Auth;
 using Application.Foundations;
 using CloudDrive.Auth;
-using CloudDrive.Dto;
+using CloudDrive.Dto.AuthDto;
+using CloudDrive.Dto.Extensions;
 using CloudDrive.Utilities;
 using Domain.Auth;
 using FluentValidation;
@@ -81,7 +82,7 @@ namespace CloudDrive.Controllers
                 return BadRequest(new ErrorResponse(validationResult.ToDictionary()));
             }
 
-            User user = await _authService.GetUser(body.Username, body.Password);
+            User user = await _authService.GetUserByCredentionals(body.Username, body.Password);
 
             if (user is null)
             {
@@ -117,7 +118,7 @@ namespace CloudDrive.Controllers
                 return BadRequest(new ErrorResponse(validationResult.ToDictionary()));
             }
 
-            User user = await _authService.GetUser(body.RefreshToken);
+            User user = await _authService.GetUserByToken(body.RefreshToken);
 
             if (user is null)
             {

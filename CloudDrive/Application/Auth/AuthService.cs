@@ -49,15 +49,20 @@ public class AuthService : IAuthService
         await _accessService.AddAccess(rootAccess);
     }
 
-    public async Task<User> GetUser(string username, string password)
+    public async Task<User> GetUserByCredentionals(string username, string password)
     {
         password = Hash(password);
         return await _userRepository.GetByUsernameAndPassword(username, password);
     }
 
-    public async Task<User> GetUser(string token)
+    public async Task<User> GetUserByToken(string token)
     {
         return await _userRepository.GetByRefreshToken(token);
+    }
+
+    public async Task<User> GetUserByUsername(string username)
+    {
+        return await _userRepository.GetByUsername(username);
     }
 
     private static string Hash(string str)

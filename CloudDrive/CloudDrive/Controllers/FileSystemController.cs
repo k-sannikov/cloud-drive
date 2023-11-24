@@ -1,7 +1,9 @@
 ﻿using Application.AccessSystem;
 using Application.FileSystem;
-using CloudDrive.Dto;
+using CloudDrive.Dto.Extensions;
+using CloudDrive.Dto.NodesDto;
 using CloudDrive.Utilities;
+using Domain.AccessSystem;
 using Domain.FileSystem;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -108,5 +110,27 @@ public class FileSystemController : ControllerBase
         }
 
         return Ok();
+    }
+
+    /// <summary>
+    /// Получить доступные узлы
+    /// </summary>
+    [HttpGet]
+    [Route("nodes/accessed")]
+    public async Task<IActionResult> GetAvailableNodes()
+    {
+        IReadOnlyList<Node> nodes;
+        try
+        {
+            nodes = await _fileSystemService.GetAvailableNodes(User.GetUserId());
+        }
+        catch (Exception exception)
+        {
+            return BadRequest(new ErrorResponse(exception.Message));
+        }
+
+        IReadOnlyList<NodeDto> nodesDto = nodes.Select(n => n.ToDto()).ToList();
+
+        return Ok(nodesDto);
     }
 }

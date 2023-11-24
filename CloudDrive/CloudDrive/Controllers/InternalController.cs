@@ -1,6 +1,7 @@
 ﻿using Application.FileSystem;
 using CloudDrive.Auth;
-using CloudDrive.Dto;
+using CloudDrive.Dto.Extensions;
+using CloudDrive.Dto.NodesDto;
 using CloudDrive.Utilities;
 using Microsoft.AspNetCore.Mvc;
 

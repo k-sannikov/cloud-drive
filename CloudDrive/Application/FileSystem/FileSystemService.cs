@@ -1,5 +1,6 @@
 ﻿using Application.AccessSystem;
 using Domain.AccessSystem;
+using Domain.Auth;
 using Domain.FileSystem;
 
 namespace Application.FileSystem;
@@ -91,5 +92,16 @@ public class FileSystemService : IFileSystemService
         }
 
         return await _fileSystemRepository.GetParentsNodes(nodeId);
+    }
+
+    public async Task<IReadOnlyList<Node>> GetAvailableNodes(string userId)
+    {
+        List<Access> accesses = await _accessService.GetAvailableNodes(userId);
+
+        IReadOnlyList<string> nodeIds = accesses.Select(a => a.NodeId).ToList();
+
+        IReadOnlyList<Node> nodes = await _fileSystemRepository.GetNodes<Node>(nodeIds);
+
+        return nodes;
     }
 }

@@ -5,6 +5,7 @@ namespace Application.Auth;
 public interface IAuthService
 {
     Task RegisterUser(User user);
-    Task<User> GetUser(string username, string password);
-    Task<User> GetUser(string token);
+    Task<User> GetUserByCredentionals(string username, string password);
+    Task<User> GetUserByToken(string token);
+    Task<User> GetUserByUsername(string username);
 }

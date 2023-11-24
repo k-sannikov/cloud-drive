@@ -1,4 +1,4 @@
-﻿namespace CloudDrive.Dto
+﻿namespace CloudDrive.Dto.NodesDto
 {
     public class NodeListDto
     {

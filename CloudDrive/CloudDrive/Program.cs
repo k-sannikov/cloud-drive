@@ -1,6 +1,8 @@
 using Application.ProxyServices;
 using CloudDrive.Auth;
-using CloudDrive.Dto;
+using CloudDrive.Dto.AuthDto;
+using CloudDrive.Dto.FoldersDto;
+using CloudDrive.Dto.LinksDto;
 using FluentValidation;
 using Infrastructure;
 using Infrastructure.AccessSystem;

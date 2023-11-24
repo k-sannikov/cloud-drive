@@ -11,4 +11,5 @@ public interface IFileSystemService
     Task RenameNode(string id, string name);
     Task DeleteNode(string nodeId);
     Task EditNode<T>(Node modifiedNode) where T : Node, new();
+    Task<IReadOnlyList<Node>> GetAvailableNodes(string userId);
 }

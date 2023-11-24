@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using CloudDrive.Dto.AuthDto;
+using FluentValidation;
 
 namespace CloudDrive.Dto.Validators
 {

@@ -1,4 +1,4 @@
-﻿namespace CloudDrive.Dto;
+﻿namespace CloudDrive.Dto.LinksDto;
 
 public class LinkDto
 {

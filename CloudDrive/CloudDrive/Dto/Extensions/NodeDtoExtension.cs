@@ -1,6 +1,9 @@
-﻿using Domain.FileSystem;
+﻿using CloudDrive.Dto.FoldersDto;
+using CloudDrive.Dto.LinksDto;
+using CloudDrive.Dto.NodesDto;
+using Domain.FileSystem;
 
-namespace CloudDrive.Dto;
+namespace CloudDrive.Dto.Extensions;
 
 public static class NodeDtoExtension
 {

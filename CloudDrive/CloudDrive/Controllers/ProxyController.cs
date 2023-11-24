@@ -1,6 +1,6 @@
 ﻿using Application.AccessSystem;
 using Application.ProxyServices;
-using CloudDrive.Dto;
+using CloudDrive.Dto.ProxyDto;
 using CloudDrive.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

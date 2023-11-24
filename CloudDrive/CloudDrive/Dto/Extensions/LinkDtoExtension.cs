@@ -1,6 +1,7 @@
-﻿using Domain.FileSystem;
+﻿using CloudDrive.Dto.LinksDto;
+using Domain.FileSystem;
 
-namespace CloudDrive.Dto;
+namespace CloudDrive.Dto.Extensions;
 
 public static class LinkDtoExtension
 {

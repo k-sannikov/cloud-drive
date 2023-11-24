@@ -1,6 +1,6 @@
-﻿namespace CloudDrive.Dto;
+﻿namespace CloudDrive.Dto.AuthDto;
 
-public class LoginDto
+public class RegisterDto
 {
     public string Username { get; set; }
     public string Password { get; set; }

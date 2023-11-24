@@ -10,4 +10,5 @@ public interface IAccessRepository
     Task<Access> GetRootByUserId(string userId);
     Task<List<Access>> GetByNodeIds(List<string> nodeIds);
     void DeleteAccess(Access access);
+    Task<List<Access>> GetAvailableNodes(string userId);
 }

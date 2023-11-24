@@ -1,7 +1,8 @@
 ﻿using Application.AccessSystem;
 using Application.FileSystem;
 using Application.Folders;
-using CloudDrive.Dto;
+using CloudDrive.Dto.Extensions;
+using CloudDrive.Dto.FoldersDto;
 using CloudDrive.Utilities;
 using Domain.AccessSystem;
 using Domain.FileSystem;

@@ -1,4 +1,4 @@
-﻿namespace CloudDrive.Dto;
+﻿namespace CloudDrive.Dto.AuthDto;
 
 public class TokenDto
 {

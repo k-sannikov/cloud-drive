@@ -1,6 +1,7 @@
-﻿using Domain.Auth;
+﻿using CloudDrive.Dto.AuthDto;
+using Domain.Auth;
 
-namespace CloudDrive.Dto;
+namespace CloudDrive.Dto.Extensions;
 
 public static class UserDtoExtension
 {

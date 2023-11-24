@@ -41,6 +41,7 @@ public class AccessRepository : IAccessRepository
     public async Task<List<Access>> GetByNodeIds(List<string> nodeIds)
     {
         return await _entities
+            .Include(a => a.User)
             .Where(a => nodeIds.Contains(a.NodeId))
             .ToListAsync();
     }
@@ -48,5 +49,11 @@ public class AccessRepository : IAccessRepository
     public void DeleteAccess(Access access)
     {
         _entities.Remove(access);
+    }
+
+   public async Task<List<Access>> GetAvailableNodes(string userId)
+    {
+        return await _entities.Where(a => a.UserId == userId && !a.IsOwner)
+            .ToListAsync();
     }
 }

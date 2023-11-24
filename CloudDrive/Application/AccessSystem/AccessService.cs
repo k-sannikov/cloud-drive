@@ -50,7 +50,31 @@ public class AccessService : IAccessService
         _accessRepository.DeleteAccess(access);
     }
 
+    public async Task DeleteAccess(int accessId)
+    {
+        Access access = await _accessRepository.GetAccess(accessId);
+
+        if (access is null)
+        {
+            throw new Exception("Access not exist");
+        }
+
+        if (access.IsOwner)
+        {
+            throw new Exception("Сannot delete the owner access");
+        }
+
+        _accessRepository.DeleteAccess(access);
+    }
+
     public async Task<bool> HasAccess(string userId, string nodeId)
+    {
+        Access access = await GetAccess(userId, nodeId);
+
+        return access is not null;
+    }
+
+    public async Task<Access> GetAccess(string userId, string nodeId)
     {
         IReadOnlyList<Node> nodes = await _fileSystemRepository.GetParentsNodes(nodeId);
 
@@ -62,7 +86,12 @@ public class AccessService : IAccessService
 
         Access access = accesses.Where(a => a.UserId == userId).FirstOrDefault();
 
-        return access is not null;
+        return access;
+    }
+
+    public async Task<Access> GetAccess(int accessId)
+    {
+        return await _accessRepository.GetAccess(accessId);
     }
 
     public async Task<Access> GetRootAccess(string userId)
@@ -73,5 +102,10 @@ public class AccessService : IAccessService
     public async Task<List<Access>> GetByNodeId(string nodeId)
     {
         return await _accessRepository.GetByNodeIds(new List<string>() { nodeId });
+    }
+
+    public async Task<List<Access>> GetAvailableNodes(string userId)
+    {
+        return await _accessRepository.GetAvailableNodes(userId);
     }
 }

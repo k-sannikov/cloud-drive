@@ -1,8 +1,7 @@
-﻿namespace CloudDrive.Dto;
+﻿namespace CloudDrive.Dto.LinksDto;
 
-public class CreateLinkDto
+public class EditLinkDto
 {
-    public string ParentId { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public string Url { get; set; }
