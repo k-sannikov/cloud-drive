@@ -7,17 +7,10 @@ services:
       context: ..
       dockerfile: ./CloudDrive/Dockerfile
     environment:
-      ASPNETCORE_ENVIRONMENT: Dev
-      ASPNETCORE_URLS: https://+:443;http://+:80
-      ASPNETCORE_Kestrel__Certificates__Default__Password: 123
-      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/cloud_drive.pfx
+      ASPNETCORE_ENVIRONMENT: Prod
+      ASPNETCORE_URLS: http://+:80
     ports:
       - "5033:80"
-      - "7167:443"
-    networks:
-      cloud_drive_network:
-        aliases:
-          - cloud-drive.dev
     volumes:
       - ./cloud_drive/https:/https
     links:
@@ -25,14 +18,12 @@ services:
       - neo4j
 
   migrations:
-    container_name: cloud_drive_migrations
+    container_name: migrations
     build:
       context: ..
       dockerfile: ./Infrastructure.Migrations/Dockerfile
     environment:
-      ASPNETCORE_ENVIRONMENT: Dev
-    networks:
-      - cloud_drive_network
+      ASPNETCORE_ENVIRONMENT: Prod
     depends_on:
       postgres:
         condition: service_healthy
@@ -40,16 +31,14 @@ services:
       - postgres
 
   postgres:
-    container_name: cloud_drive_postgres
-    image: postgres:13
+    container_name: postgres
+    image: postgres:14-bullseye
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123
+      POSTGRES_PASSWORD: KLzz3Hnd
       PGDATA: "/var/lib/postgresql/data/pgdata"
     ports:
       - "5432:5432"
-    networks:
-      - cloud_drive_network
     volumes:
       - ./postgres/entrypoint-initdb:/docker-entrypoint-initdb.d
       - ./postgres/data:/var/lib/postgresql/data
@@ -59,19 +48,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-
-  pgadmin:
-    container_name: cloud_drive_pgadmin
-    image: dpage/pgadmin4:7.8
-    environment:
-      PGADMIN_DEFAULT_EMAIL: postgres@mail.com
-      PGADMIN_DEFAULT_PASSWORD: 123
-    ports:
-      - "5050:80"
-    networks:
-      - cloud_drive_network
-    links:
-      - postgres
 
   neo4j:
     container_name: cloud_drive_neo4j
@@ -83,12 +59,6 @@ services:
       - ./neo4j/import:/var/lib/neo4j/import
       - ./neo4j/plugins:/plugins
     environment:
-      NEO4J_AUTH: neo4j/123 
+      NEO4J_AUTH: neo4j/eEzEVhn4
     ports:
       - "7474:7474"
-    networks:
-      - cloud_drive_network
-
-networks:
-    cloud_drive_network:
-        name: "cloud_drive_network"
