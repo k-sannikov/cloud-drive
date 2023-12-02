@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using Common.ApiUtils;
 
 namespace CloudDrive
 {
@@ -62,6 +63,9 @@ namespace CloudDrive
                         Type = ReferenceType.SecurityScheme
                     }
                 };
+
+                // Add schema filters
+                c.SchemaFilter<ExampleSchemaFilter>();
 
                 c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
 
@@ -144,6 +148,8 @@ namespace CloudDrive
             services.AddAuthServices();
 
             services.AddProxyServices();
+
+            services.AddVersioning();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

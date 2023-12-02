@@ -12,8 +12,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CloudDrive.Controllers
 {
+    /// <summary>
+    /// API авторизации
+    /// </summary>
     [ApiController]
-    [Route("api")]
+    [Route("api/v{version:apiVersion}")]
+    [ApiVersion("1.0")]
     public class AuthController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;

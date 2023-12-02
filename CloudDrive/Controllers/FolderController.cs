@@ -1,8 +1,10 @@
 ﻿using Application.AccessSystem;
 using Application.FileSystem;
 using Application.Folders;
+using CloudDrive.Dto.AccessesDto;
 using CloudDrive.Dto.Extensions;
 using CloudDrive.Dto.FoldersDto;
+using CloudDrive.Dto.NodesDto;
 using CloudDrive.Utilities;
 using Domain.AccessSystem;
 using Domain.FileSystem;
@@ -10,12 +12,17 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace CloudDrive.Controllers;
 
+/// <summary>
+/// API управления директориями
+/// </summary>
 [ApiController]
 [Authorize]
-[Route("api/folders")]
+[Route("api/v{version:apiVersion}/folders")]
+[ApiVersion("1.0")]
 public class FolderController : ControllerBase
 {
     private readonly IFoldersService _foldersService;
@@ -39,10 +46,12 @@ public class FolderController : ControllerBase
 
 
     /// <summary>
-    /// Получить родительскую директорию текущего пользователя
+    /// Получить корневую директорию текущего пользователя
     /// </summary>
     [HttpGet]
     [Route("root")]
+    [SwaggerResponse(statusCode: 200, type: typeof(NodeListDto),
+            description: "Список нод корневой директории пользователя")]
     public async Task<IActionResult> GetRootFolder()
     {
         Access access = await _accessService.GetRootAccess(User.GetUserId());
@@ -107,6 +116,8 @@ public class FolderController : ControllerBase
 
     /// <summary>
     /// Редактировать директорию
+    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
+    /// Id ноды
     /// </summary>
     [HttpPut]
     [Route("{nodeId}")]

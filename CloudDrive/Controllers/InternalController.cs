@@ -7,9 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CloudDrive.Controllers
 {
+    /// <summary>
+    /// Внетреннее API для взаимодействия с внешними микросервисами
+    /// </summary>
     [ApiController]
     [ApiKeyAuthFilter]
-    [Route("api/internal")]
+    [Route("api/v{version:apiVersion}/internal")]
+    [ApiVersion("1.0")]
     public class InternalController : ControllerBase
     {
         private readonly IFileSystemService _fileSystemService;
@@ -40,14 +44,16 @@ namespace CloudDrive.Controllers
 
         /// <summary>
         /// Переименовать ноду
+        /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
+        /// Id ноды
         /// </summary>
         [HttpPut]
-        [Route("nodes/{id}")]
-        public async Task<IActionResult> RenameNode([FromRoute] string id, [FromBody] RenameNodeDto body)
+        [Route("nodes/{nodeId}")]
+        public async Task<IActionResult> RenameNode([FromRoute] string nodeId, [FromBody] RenameNodeDto body)
         {
             try
             {
-                await _fileSystemService.RenameNode(id, body.Name);
+                await _fileSystemService.RenameNode(nodeId, body.Name);
             }
             catch (Exception exception)
             {
@@ -59,14 +65,16 @@ namespace CloudDrive.Controllers
 
         /// <summary>
         /// Удалить ноду
+        /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
+        /// Id ноды
         /// </summary>
         [HttpDelete]
-        [Route("nodes/{id}")]
-        public async Task<IActionResult> DeleteNode([FromRoute] string id)
+        [Route("nodes/{nodeId}")]
+        public async Task<IActionResult> DeleteNode([FromRoute] string nodeId)
         {
             try
             {
-                await _fileSystemService.DeleteNode(id);
+                await _fileSystemService.DeleteNode(nodeId);
             }
             catch (Exception exception)
             {

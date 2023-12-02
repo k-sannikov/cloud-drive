@@ -2,18 +2,24 @@
 using Application.FileSystem;
 using CloudDrive.Dto.Extensions;
 using CloudDrive.Dto.LinksDto;
+using CloudDrive.Dto.NodesDto;
 using CloudDrive.Utilities;
 using Domain.FileSystem;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace CloudDrive.Controllers;
 
+/// <summary>
+/// API для упраления ссылками
+/// </summary>
 [ApiController]
 [Authorize]
-[Route("api/links")]
+[Route("api/v{version:apiVersion}/links")]
+[ApiVersion("1.0")]
 public class LinkController : ControllerBase
 {
     private readonly IFileSystemService _fileSystemService;
@@ -34,9 +40,13 @@ public class LinkController : ControllerBase
 
     /// <summary>
     /// Получить ссылку
+    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
+    /// Id ноды
     /// </summary>
     [HttpGet]
     [Route("{nodeId}")]
+    [SwaggerResponse(statusCode: 200, type: typeof(LinkDto),
+            description: "Информаци о ссылке")]
     public async Task<IActionResult> GetLink([FromRoute] string nodeId)
     {
         bool hasAccess = await _accessService.HasAccess(User.GetUserId(), nodeId);
@@ -100,6 +110,8 @@ public class LinkController : ControllerBase
 
     /// <summary>
     /// Редактировать ссылку
+    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
+    /// Id ноды
     /// </summary>
     [HttpPut]
     [Route("{nodeId}")]

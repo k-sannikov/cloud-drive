@@ -8,12 +8,17 @@ using Domain.AccessSystem;
 using Domain.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace CloudDrive.Controllers
 {
+    /// <summary>
+    /// API для управления доступом к нодам
+    /// </summary>
     [ApiController]
     [Authorize]
-    [Route("api")]
+    [Route("api/v{version:apiVersion}/access")]
+    [ApiVersion("1.0")]
     public class AccessController : ControllerBase
     {
         private readonly IAccessService _accessService;
@@ -28,10 +33,14 @@ namespace CloudDrive.Controllers
         }
 
         /// <summary>
-        /// Получить доступы для ноды
+        /// Получить список пользователей у которых есть доступ к ноде
+        /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
+        /// Id ноды
         /// </summary>
         [HttpGet]
-        [Route("access/{nodeId}")]
+        [Route("{nodeId}")]
+        [SwaggerResponse(statusCode: 200, type: typeof(List<AccessDto>),
+            description: "Список пользователей у которых есть доступ к ноде")]
         public async Task<IActionResult> GetAccessesByNodeId([FromRoute] string nodeId)
         {
             bool hasAccess = await _accessService.HasAccess(User.GetUserId(), nodeId);
@@ -54,7 +63,7 @@ namespace CloudDrive.Controllers
         /// Выдать доступ к ноде
         /// </summary>
         [HttpPost]
-        [Route("access")]
+        [Route("")]
         public async Task<IActionResult> CreateAccess([FromBody] CreateAccessDto body)
         {
             Access access = await _accessService.GetAccess(User.GetUserId(), body.NodeId);
@@ -98,9 +107,11 @@ namespace CloudDrive.Controllers
 
         /// <summary>
         /// Удалить доступ к ноде
+        /// <param name="accessId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
+        /// Id доступа к ноде
         /// </summary>
         [HttpDelete]
-        [Route("access/{accessId}")]
+        [Route("{accessId}")]
         public async Task<IActionResult> DeleteAccess([FromRoute] int accessId)
         {
             Access access = await _accessService.GetAccess(accessId);

@@ -1,17 +1,23 @@
 ﻿using Application.AccessSystem;
 using Application.ProxyServices;
+using CloudDrive.Dto.NodesDto;
 using CloudDrive.Dto.ProxyDto;
 using CloudDrive.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
 
 namespace CloudDrive.Controllers
 {
+    /// <summary>
+    /// API для проксирования запроса в внешние микросервисы
+    /// </summary>
     [ApiController]
     [Authorize]
-    [Route("api")]
+    [Route("api/v{version:apiVersion}/proxy")]
+    [ApiVersion("1.0")]
     public class ProxyController : ControllerBase
     {
         private readonly IAccessService _accessService;
@@ -25,15 +31,22 @@ namespace CloudDrive.Controllers
             _proxySettings = proxySettings;
         }
 
+        /// <summary>
+        /// Проксирование запроса в внешний сервис
+        /// <param name="key" example="create-note">
+        /// Ключ маршрута для перенаправления запроса
+        /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
+        /// Id ноды
+        /// </summary>
         [HttpPost]
-        [Route("proxy/{key}/{id}")]
+        [Route("{key}/{id}")]
         public async Task<IActionResult> Proxy([FromRoute] string key,
-            [FromRoute] string id,
+            [FromRoute] string nodeId,
             [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] JsonElement body)
         {
             string userId = User.GetUserId();
 
-            bool hasAccess = await _accessService.HasAccess(userId, id);
+            bool hasAccess = await _accessService.HasAccess(userId, nodeId);
 
             if (!hasAccess)
             {
@@ -51,7 +64,7 @@ namespace CloudDrive.Controllers
 
             try
             {
-                response = _proxyService.ResoveRequest(key, id, json);
+                response = _proxyService.ResoveRequest(key, nodeId, json);
             }
             catch (Exception exception)
             {
@@ -64,9 +77,14 @@ namespace CloudDrive.Controllers
             return StatusCode((int)response.StatusCode, responseJson);
         }
 
+        /// <summary>
+        /// Получить конфигурацию внешних сервисов
+        /// </summary>
         [HttpGet]
-        [Route("proxy/settings")]
-        public IActionResult GetProxySettings()
+        [Route("configuration")]
+        [SwaggerResponse(statusCode: 200, type: typeof(List<ProxyServiceDto>),
+            description: "Конфигурация внешних сервисов")]
+        public IActionResult GetProxyConfiguration()
         {
             List<ProxyServiceDto> settings = new();
 

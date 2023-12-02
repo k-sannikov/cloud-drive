@@ -1,24 +1,29 @@
 ﻿using Application.AccessSystem;
 using Application.FileSystem;
 using CloudDrive.Dto.Extensions;
+using CloudDrive.Dto.LinksDto;
 using CloudDrive.Dto.NodesDto;
 using CloudDrive.Utilities;
-using Domain.AccessSystem;
 using Domain.FileSystem;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace CloudDrive.Controllers;
 
+/// <summary>
+/// API для упраления нодами
+/// </summary>
 [ApiController]
 [Authorize]
-[Route("api/nodes")]
-public class FileSystemController : ControllerBase
+[Route("api/v{version:apiVersion}/nodes")]
+[ApiVersion("1.0")]
+public class NodeController : ControllerBase
 {
     private readonly IFileSystemService _fileSystemService;
     private readonly IAccessService _accessService;
 
-    public FileSystemController(IFileSystemService fileSystemService,
+    public NodeController(IFileSystemService fileSystemService,
         IAccessService accessService)
     {
         _fileSystemService = fileSystemService;
@@ -27,9 +32,13 @@ public class FileSystemController : ControllerBase
 
     /// <summary>
     /// Получить дочерние ноды
+    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
+    /// Id ноды
     /// </summary>
     [HttpGet]
     [Route("{nodeId}/childs")]
+    [SwaggerResponse(statusCode: 200, type: typeof(NodeListDto),
+            description: "Список дочерних нод")]
     public async Task<IActionResult> GetChildsNodes([FromRoute] string nodeId)
     {
         bool hasAccess = await _accessService.HasAccess(User.GetUserId(), nodeId);
@@ -57,11 +66,15 @@ public class FileSystemController : ControllerBase
     }
 
     /// <summary>
-    /// Получить все родительские ноды
+    /// Получить путь до ноды
+    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
+    /// Id ноды
     /// </summary>
     [HttpGet]
-    [Route("{nodeId}/parents")]
-    public async Task<IActionResult> GetParentsNodes([FromRoute] string nodeId)
+    [Route("{nodeId}/path")]
+    [SwaggerResponse(statusCode: 200, type: typeof(List<NodeDto>),
+            description: "Список нод (путь до ноды)")]
+    public async Task<IActionResult> GetPath([FromRoute] string nodeId)
     {
         bool hasAccess = await _accessService.HasAccess(User.GetUserId(), nodeId);
 
@@ -87,6 +100,8 @@ public class FileSystemController : ControllerBase
 
     /// <summary>
     /// Удалить ноду со всеми ее дочерними нодами
+    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
+    /// Id ноды
     /// </summary>
     [HttpDelete]
     [Route("{nodeId}")]
@@ -113,10 +128,12 @@ public class FileSystemController : ControllerBase
     }
 
     /// <summary>
-    /// Получить доступные узлы
+    /// Получить узлы, к которым пользователю выдали доступ
     /// </summary>
     [HttpGet]
-    [Route("nodes/accessed")]
+    [Route("accessed")]
+    [SwaggerResponse(statusCode: 200, type: typeof(List<NodeDto>),
+            description: "Список нод к которым пользователю выдали доступ")]
     public async Task<IActionResult> GetAvailableNodes()
     {
         IReadOnlyList<Node> nodes;
