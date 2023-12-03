@@ -44,9 +44,8 @@ namespace CloudDrive.Controllers
 
         /// <summary>
         /// Переименовать ноду
-        /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
-        /// Id ноды
         /// </summary>
+        /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">Id ноды</param>
         [HttpPut]
         [Route("nodes/{nodeId}")]
         public async Task<IActionResult> RenameNode([FromRoute] string nodeId, [FromBody] RenameNodeDto body)
@@ -65,9 +64,8 @@ namespace CloudDrive.Controllers
 
         /// <summary>
         /// Удалить ноду
-        /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
-        /// Id ноды
         /// </summary>
+        /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">Id ноды</param>
         [HttpDelete]
         [Route("nodes/{nodeId}")]
         public async Task<IActionResult> DeleteNode([FromRoute] string nodeId)

@@ -116,9 +116,8 @@ public class FolderController : ControllerBase
 
     /// <summary>
     /// Редактировать директорию
-    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
-    /// Id ноды
     /// </summary>
+    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">Id ноды</param>
     [HttpPut]
     [Route("{nodeId}")]
     public async Task<IActionResult> EditFolder([FromRoute] string nodeId, [FromBody] EditFolderDto body)

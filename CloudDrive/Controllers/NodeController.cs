@@ -32,9 +32,8 @@ public class NodeController : ControllerBase
 
     /// <summary>
     /// Получить дочерние ноды
-    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
-    /// Id ноды
     /// </summary>
+    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">Id ноды</param>
     [HttpGet]
     [Route("{nodeId}/childs")]
     [SwaggerResponse(statusCode: 200, type: typeof(NodeListDto),
@@ -67,9 +66,8 @@ public class NodeController : ControllerBase
 
     /// <summary>
     /// Получить путь до ноды
-    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
-    /// Id ноды
     /// </summary>
+    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">Id ноды</param>
     [HttpGet]
     [Route("{nodeId}/path")]
     [SwaggerResponse(statusCode: 200, type: typeof(List<NodeDto>),
@@ -100,9 +98,8 @@ public class NodeController : ControllerBase
 
     /// <summary>
     /// Удалить ноду со всеми ее дочерними нодами
-    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
-    /// Id ноды
     /// </summary>
+    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">Id ноды</param>
     [HttpDelete]
     [Route("{nodeId}")]
     public async Task<IActionResult> DeleteNode([FromRoute] string nodeId)

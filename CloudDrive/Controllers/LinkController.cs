@@ -40,9 +40,8 @@ public class LinkController : ControllerBase
 
     /// <summary>
     /// Получить ссылку
-    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
-    /// Id ноды
     /// </summary>
+    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">Id ноды</param>
     [HttpGet]
     [Route("{nodeId}")]
     [SwaggerResponse(statusCode: 200, type: typeof(LinkDto),
@@ -110,9 +109,8 @@ public class LinkController : ControllerBase
 
     /// <summary>
     /// Редактировать ссылку
-    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
-    /// Id ноды
     /// </summary>
+    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">Id ноды</param>
     [HttpPut]
     [Route("{nodeId}")]
     public async Task<IActionResult> EditLink([FromRoute] string nodeId, [FromBody] EditLinkDto body)

@@ -34,9 +34,8 @@ namespace CloudDrive.Controllers
 
         /// <summary>
         /// Получить список пользователей у которых есть доступ к ноде
-        /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
-        /// Id ноды
         /// </summary>
+        /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">Id ноды</param>
         [HttpGet]
         [Route("{nodeId}")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<AccessDto>),
@@ -107,9 +106,8 @@ namespace CloudDrive.Controllers
 
         /// <summary>
         /// Удалить доступ к ноде
-        /// <param name="accessId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
-        /// Id доступа к ноде
         /// </summary>
+        /// <param name="accessId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">Id доступа к ноде</param>
         [HttpDelete]
         [Route("{accessId}")]
         public async Task<IActionResult> DeleteAccess([FromRoute] int accessId)

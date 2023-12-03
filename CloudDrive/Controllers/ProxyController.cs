@@ -33,11 +33,9 @@ namespace CloudDrive.Controllers
 
         /// <summary>
         /// Проксирование запроса в внешний сервис
-        /// <param name="key" example="create-note">
-        /// Ключ маршрута для перенаправления запроса
-        /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">
-        /// Id ноды
         /// </summary>
+        /// <param name="key" example="create-note">Ключ маршрута для перенаправления запроса</param>
+        /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">Id ноды</param>
         [HttpPost]
         [Route("{key}/{id}")]
         public async Task<IActionResult> Proxy([FromRoute] string key,
