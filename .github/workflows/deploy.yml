@@ -1,0 +1,49 @@
+# rebuild containers on remote server through ssh.
+
+name: "Deploy"
+on:
+  push:
+    branches: ["master"]
+    
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Create cloud_drive image
+        run: |
+          docker build -t ksannikow/lufi:app-latest -t ksannikow/lufi:app-${{ github.run_number }} -f ./CloudDrive/Dockerfile .
+
+      - name: Create cloud_drive_migrations image
+        run: |
+          docker build -t ksannikow/lufi:migrations-latest -t ksannikow/lufi:migrations-${{ github.run_number }} -f ./CloudDrive/Dockerfile .
+
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Publish app image
+        run: |
+          docker push ksannikow/lufi:app-latest
+          docker push ksannikow/lufi:app-${{ github.run_number }}
+
+      - name: Publish migrations image
+        run: |
+          docker push ksannikow/lufi:migrations-latest
+          docker push ksannikow/lufi:migrations-${{ github.run_number }}
+
+      - name: Build containers
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+            host: ${{ secrets.SSH_HOST }}
+            username: ${{ secrets.SSH_USER }}
+            password: ${{ secrets.SSH_PASSWORD }}
+            script: |
+              cd ${{ secrets.PROJECT_FOLDER }};
+              git checkout master;
+              docker-compose --file docker-compose-prod.yml down --rmi local;
+              git pull --rebase;
+              docker-compose --file docker-compose-prod.yml up -d;
+              docker system prune --all --force;

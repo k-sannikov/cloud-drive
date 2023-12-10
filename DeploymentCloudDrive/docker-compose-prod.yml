@@ -3,9 +3,7 @@ services:
 
   cloud_drive:
     container_name: cloud_drive
-    build:
-      context: ..
-      dockerfile: ./CloudDrive/Dockerfile
+    image: ksannikow/lufi:app-latest
     environment:
       ASPNETCORE_ENVIRONMENT: Prod
       ASPNETCORE_URLS: http://+:80
@@ -19,9 +17,7 @@ services:
 
   migrations:
     container_name: migrations
-    build:
-      context: ..
-      dockerfile: ./Infrastructure.Migrations/Dockerfile
+    image: ksannikow/lufi:migrations-latest
     environment:
       ASPNETCORE_ENVIRONMENT: Prod
     depends_on:
@@ -50,7 +46,7 @@ services:
       start_period: 10s
 
   neo4j:
-    container_name: cloud_drive_neo4j
+    container_name: neo4j
     image: neo4j:4.2.3
     volumes:
       - ./neo4j/data:/data
