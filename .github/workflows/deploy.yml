@@ -4,6 +4,16 @@ name: "Deploy"
 on:
   push:
     branches: ["master"]
+  workflow_dispatch:
+    inputs:
+      cloudDriveVersion:
+        description: 'cloud_drive version'
+        required: true
+        default: 'latest'
+      cloudDriveMigrationsVersion:
+        description: 'cloud_drive_migrations version'
+        required: true
+        default: 'latest'
     
 jobs:
   deploy:
@@ -15,24 +25,24 @@ jobs:
 
       - name: Create cloud_drive image
         run: |
-          docker build -t ksannikow/lufi:app-latest -t ksannikow/lufi:app-${{ github.run_number }} -f ./CloudDrive/Dockerfile .
+          docker build -t ksannikow/cloud_drive:latest -t ksannikow/cloud_drive:${{ github.run_number }} -f ./CloudDrive/Dockerfile .
 
       - name: Create cloud_drive_migrations image
         run: |
-          docker build -t ksannikow/lufi:migrations-latest -t ksannikow/lufi:migrations-${{ github.run_number }} -f ./CloudDrive/Dockerfile .
+          docker build -t ksannikow/cloud_drive_migrations:latest -t ksannikow/cloud_drive_migrations:${{ github.run_number }} -f ./CloudDrive/Dockerfile .
 
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Publish app image
+      - name: Publish cloud_drive image
         run: |
-          docker push ksannikow/lufi:app-latest
-          docker push ksannikow/lufi:app-${{ github.run_number }}
+          docker push ksannikow/cloud_drive:latest
+          docker push ksannikow/cloud_drive:${{ github.run_number }}
 
       - name: Publish migrations image
         run: |
-          docker push ksannikow/lufi:migrations-latest
-          docker push ksannikow/lufi:migrations-${{ github.run_number }}
+          docker push ksannikow/cloud_drive_migrations:latest
+          docker push ksannikow/cloud_drive_migrations:${{ github.run_number }}
 
       - name: Build containers
         uses: appleboy/ssh-action@v1.0.0
@@ -41,6 +51,8 @@ jobs:
             username: ${{ secrets.SSH_USER }}
             password: ${{ secrets.SSH_PASSWORD }}
             script: |
+              export CLOUD_DRIVE_VERSION=${{ github.event.inputs.cloudDriveVersion }}
+              export CLOUD_DRIVE_MIGRATIONS_VERSION=${{ github.event.inputs.cloudDriveMigrationsVersion }}
               cd ${{ secrets.PROJECT_FOLDER }};
               git checkout master;
               docker-compose --file docker-compose-prod.yml down --rmi local;

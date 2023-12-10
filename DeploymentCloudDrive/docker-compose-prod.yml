@@ -3,7 +3,7 @@ services:
 
   cloud_drive:
     container_name: cloud_drive
-    image: ksannikow/lufi:app-latest
+    image: ksannikow/cloud_drive:${CLOUD_DRIVE_VERSION}
     environment:
       ASPNETCORE_ENVIRONMENT: Prod
       ASPNETCORE_URLS: http://+:80
@@ -17,7 +17,7 @@ services:
 
   migrations:
     container_name: migrations
-    image: ksannikow/lufi:migrations-latest
+    image: ksannikow/cloud_drive_migrations:${CLOUD_DRIVE_MIGRATIONS_VERSION}
     environment:
       ASPNETCORE_ENVIRONMENT: Prod
     depends_on:
