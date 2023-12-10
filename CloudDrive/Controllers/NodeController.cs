@@ -1,7 +1,6 @@
 ﻿using Application.AccessSystem;
 using Application.FileSystem;
 using CloudDrive.Dto.Extensions;
-using CloudDrive.Dto.LinksDto;
 using CloudDrive.Dto.NodesDto;
 using CloudDrive.Utilities;
 using Domain.FileSystem;
@@ -92,6 +91,46 @@ public class NodeController : ControllerBase
         }
 
         IReadOnlyList<NodeDto> nodesDto = nodes.Select(n => n.ToDto()).ToList();
+
+        return Ok(nodesDto);
+    }
+
+    /// <summary>
+    /// Получить относительный путь до ноды
+    /// </summary>
+    /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">Id ноды</param>
+    [HttpGet]
+    [Route("{nodeId}/relative-path")]
+    [SwaggerResponse(statusCode: 200, type: typeof(List<NodeDto>),
+            description: "Список нод (путь до ноды)")]
+    public async Task<IActionResult> GetRelativePath([FromRoute] string nodeId)
+    {
+        bool hasAccess = await _accessService.HasAccess(User.GetUserId(), nodeId);
+
+        if (!hasAccess)
+        {
+            return StatusCode(403, new ErrorResponse("No accesses"));
+        }
+
+        IReadOnlyList<Node> nodes;
+        try
+        {
+            nodes = await _fileSystemService.GetParentsNodes(nodeId);
+        }
+        catch (Exception exception)
+        {
+            return BadRequest(new ErrorResponse(exception.Message));
+        }
+
+        List<NodeDto> nodesDto = new();
+
+        foreach (Node node in nodes)
+        {
+            if (await _accessService.HasAccess(User.GetUserId(), node.Id))
+            {
+                nodesDto.Add(node.ToDto());
+            }
+        }
 
         return Ok(nodesDto);
     }
