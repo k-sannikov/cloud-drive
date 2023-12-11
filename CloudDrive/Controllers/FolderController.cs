@@ -58,7 +58,7 @@ public class FolderController : ControllerBase
 
         if (access is null)
         {
-            return StatusCode(403, new ErrorResponse("No accesses"));
+            return StatusCode(403, new ErrorResponse("Нет доступа"));
         }
 
         IReadOnlyList<Node> nodes;
@@ -68,7 +68,7 @@ public class FolderController : ControllerBase
         {
             nodes = await _fileSystemService.GetChildNodes(access.NodeId);
             node = (await _fileSystemService.GetNode<Folder>(access.NodeId))
-                ?? throw new Exception("Root node not found");
+                ?? throw new Exception("Корневой узел не найден");
         }
         catch (Exception exception)
         {
@@ -89,7 +89,7 @@ public class FolderController : ControllerBase
 
         if (!hasAccess)
         {
-            return StatusCode(403, new ErrorResponse("No accesses"));
+            return StatusCode(403, new ErrorResponse("Нет доступа"));
         }
 
         ValidationResult validationResult = await _createFolderDtoValidator.ValidateAsync(body);
@@ -126,7 +126,7 @@ public class FolderController : ControllerBase
 
         if (!hasAccess)
         {
-            return StatusCode(403, new ErrorResponse("No accesses"));
+            return StatusCode(403, new ErrorResponse("Нет доступа"));
         }
 
         ValidationResult validationResult = await _editFolderDtoValidator.ValidateAsync(body);

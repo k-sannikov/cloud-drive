@@ -43,7 +43,7 @@ public class NodeController : ControllerBase
 
         if (!hasAccess)
         {
-            return StatusCode(403, new ErrorResponse("No accesses"));
+            return StatusCode(403, new ErrorResponse("Нет доступа"));
         }
 
         IReadOnlyList<Node> nodes;
@@ -53,7 +53,7 @@ public class NodeController : ControllerBase
         {
             nodes = await _fileSystemService.GetChildNodes(nodeId);
             node = (await _fileSystemService.GetNode<Folder>(nodeId))
-                ?? throw new Exception("Root node not found");
+                ?? throw new Exception("Корневой узел не найден");
         }
         catch (Exception exception)
         {
@@ -77,7 +77,7 @@ public class NodeController : ControllerBase
 
         if (!hasAccess)
         {
-            return StatusCode(403, new ErrorResponse("No accesses"));
+            return StatusCode(403, new ErrorResponse("Нет доступа"));
         }
 
         IReadOnlyList<Node> nodes;
@@ -109,7 +109,7 @@ public class NodeController : ControllerBase
 
         if (!hasAccess)
         {
-            return StatusCode(403, new ErrorResponse("No accesses"));
+            return StatusCode(403, new ErrorResponse("Нет доступа"));
         }
 
         IReadOnlyList<Node> nodes;

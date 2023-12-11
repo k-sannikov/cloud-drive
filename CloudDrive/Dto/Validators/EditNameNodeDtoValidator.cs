@@ -9,7 +9,9 @@ namespace CloudDrive.Dto.Validators
         {
             RuleFor(editNameDto => editNameDto.Name)
                 .NotEmpty()
-                .MaximumLength(60);
+                .WithMessage("название заметки не может быть пустым")
+                .MaximumLength(60)
+                .WithMessage("название заметки не может включать более 60 символов");
         }
     }
 }

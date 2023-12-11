@@ -19,7 +19,7 @@ public class FoldersService : IFoldersService
         Node node = await _fileSystemService.GetNode<Node>(parentId);
         if (node is null)
         {
-            throw new Exception($"Node with id: {node.Id} not exist");
+            throw new Exception($"Не существует заметки с id: {node.Id}");
         }
         await _fileSystemRepository.AddNodeWithRelation(folder, parentId);
     }

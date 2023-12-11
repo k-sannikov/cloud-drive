@@ -10,7 +10,7 @@ namespace CloudDrive.Utilities
 
             if (claim is null)
             {
-                throw new Exception("userId not found");
+                throw new Exception("Id пользователя не найден");
             }
 
             return claim.Value;

@@ -8,18 +8,24 @@ namespace CloudDrive.Dto.Validators
         public CreateLinkDtoValidator()
         {
             RuleFor(createLinkDto => createLinkDto.ParentId)
-                .NotEmpty();
+                .NotEmpty()
+                .WithMessage("id родительской папки не может быть пустым");
 
             RuleFor(createLinkDto => createLinkDto.Name)
                 .NotEmpty()
-                .MaximumLength(60);
+                .WithMessage("название сслыки не может быть пустым")
+                .MaximumLength(60)
+                .WithMessage("название ссылки не может включать более 60 символов");
 
             RuleFor(createLinkDto => createLinkDto.Description)
-                .MaximumLength(255);
+                .MaximumLength(255)
+                .WithMessage("описание ссылки не может включать более 255 символов");
 
             RuleFor(createLinkDto => createLinkDto.Url)
                 .NotEmpty()
-                .MaximumLength(255);
+                .WithMessage("адрес сслыки не может быть пустым")
+                .MaximumLength(255)
+                .WithMessage("адрес ссылки не может включать более 255 символов");
         }
     }
 }
