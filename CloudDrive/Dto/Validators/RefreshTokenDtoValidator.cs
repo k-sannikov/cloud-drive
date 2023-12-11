@@ -8,7 +8,8 @@ namespace CloudDrive.Dto.Validators
         public RefreshTokenDtoValidator()
         {
             RuleFor(refreshTokenDto => refreshTokenDto.RefreshToken)
-                .NotEmpty();
+                .NotEmpty()
+                .WithMessage("токен не может быть пустым");
         }
     }
 }

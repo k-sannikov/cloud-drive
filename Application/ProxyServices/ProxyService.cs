@@ -22,7 +22,7 @@ public class ProxyService : IProxyService
     {
         if (key is null)
         {
-            throw new Exception("Key is null");
+            throw new Exception("Ключ отсутствует");
         }
 
         foreach (ProxyServiceSettings service in _proxySettings.Services)
@@ -52,13 +52,13 @@ public class ProxyService : IProxyService
                 }
                 catch (Exception)
                 {
-                    throw new Exception("Connection error");
+                    throw new Exception("Ошибка подключения");
                 }
 
                 return response;
             }
         }
-        throw new Exception("Request not resolve");
+        throw new Exception("Запрос не разрешен");
     }
 
     private static HttpMethod GetMethod(string method)

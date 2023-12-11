@@ -15,17 +15,23 @@ namespace CloudDrive.Dto.Validators
 
             RuleFor(registerDto => registerDto.Username)
                 .MinimumLength(3)
+                .WithMessage("имя пользователя должно включать не менее 3 символов")
                 .MaximumLength(255)
-                .NotEmpty();
+                .WithMessage("имя пользователя должно включать не более 255 символов")
+                .NotEmpty()
+                .WithMessage("имя пользователя не может быть пустым");
 
             RuleFor(item => item)
                 .MustAsync(async (item, cancellation) => await _authValidationRules.IsUniqueUsername(item.Username))
-                .WithMessage(item => "Username is not unique");
+                .WithMessage(item => "Имя пользователя должно быть уникально");
 
             RuleFor(registerDto => registerDto.Password)
                 .NotEmpty()
+                .WithMessage("пароль не может быть пустым")
                 .MinimumLength(6)
-                .MaximumLength(60);
+                .WithMessage("пароль должен включать не менее 6 символов")
+                .MaximumLength(60)
+                .WithMessage("пароль должен включать не более 60 символов");
         }
     }
 }

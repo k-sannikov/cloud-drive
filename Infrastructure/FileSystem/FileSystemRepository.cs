@@ -30,7 +30,7 @@ public class FileSystemRepository : IFileSystemRepository
 
         if (counters.NodesCreated == 0)
         {
-            throw new Exception("Node not created");
+            throw new Exception("Заметка не создана");
         }
     }
 
@@ -60,7 +60,7 @@ public class FileSystemRepository : IFileSystemRepository
 
         if (counters.PropertiesSet == 0)
         {
-            throw new Exception("Node not rename");
+            throw new Exception("Заметка не переименована");
         }
     }
 
@@ -79,7 +79,7 @@ public class FileSystemRepository : IFileSystemRepository
 
         if (counters.PropertiesSet == 0)
         {
-            throw new Exception("Node not edit");
+            throw new Exception("Заметка не изменена");
         }
     }
 
@@ -99,7 +99,7 @@ public class FileSystemRepository : IFileSystemRepository
 
         if (counters.NodesCreated == 0 || counters.RelationshipsCreated == 0)
         {
-            throw new Exception("Node or relationships not created");
+            throw new Exception("Заметка или связи не созданы");
         }
     }
 
@@ -123,7 +123,7 @@ public class FileSystemRepository : IFileSystemRepository
 
         if (countersMultiDelete.NodesDeleted == 0 && countersSingleDelete.NodesDeleted == 0)
         {
-            throw new Exception("Node not deleted");
+            throw new Exception("Заметка не удалена");
         }
     }
 

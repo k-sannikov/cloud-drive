@@ -29,7 +29,7 @@ public class FileSystemService : IFileSystemService
         Node node = await GetNode<Node>(parentId);
         if (node is null)
         {
-            throw new Exception($"Node with id: {node.Id} not exist");
+            throw new Exception($"Не существует заметки с id: {node.Id}");
         }
         await _fileSystemRepository.AddNodeWithRelation(newNode, parentId);
     }
@@ -44,7 +44,7 @@ public class FileSystemService : IFileSystemService
         Node node = await GetNode<Node>(nodeId);
         if (node is null)
         {
-            throw new Exception($"Node with id: {nodeId} not exist");
+            throw new Exception($"Не существует заметки с id: {node.Id}");
         }
 
         List<Access> access = await _accessService.GetByNodeId(nodeId);
@@ -53,7 +53,7 @@ public class FileSystemService : IFileSystemService
 
         if (isRoot)
         {
-            throw new Exception($"Cannot delete the root directory");
+            throw new Exception($"Невозможно удалить корневой каталог");
         }
 
         await _fileSystemRepository.DeleteNodeWithChildren(nodeId);
@@ -64,7 +64,7 @@ public class FileSystemService : IFileSystemService
         Node node = await GetNode<Node>(modifiedNode.Id);
         if (node is null)
         {
-            throw new Exception($"Node with id: {node.Id} not exist");
+            throw new Exception($"Не существует заметки с id: {node.Id}");
         }
 
         modifiedNode.Type = node.Type;
@@ -77,7 +77,7 @@ public class FileSystemService : IFileSystemService
         Node node = await GetNode<Node>(nodeId);
         if (node is null)
         {
-            throw new Exception($"Node with id: {node.Id} not exist");
+            throw new Exception($"Не существует заметки с id: {node.Id}");
         }
 
         return await _fileSystemRepository.GetChildsNodes(nodeId);
@@ -88,7 +88,7 @@ public class FileSystemService : IFileSystemService
         Node node = await GetNode<Node>(nodeId);
         if (node is null)
         {
-            throw new Exception($"Node with id: {node.Id} not exist");
+            throw new Exception($"Не существует заметки с id: {node.Id}");
         }
 
         return await _fileSystemRepository.GetParentsNodes(nodeId);

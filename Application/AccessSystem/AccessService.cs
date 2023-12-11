@@ -27,7 +27,7 @@ public class AccessService : IAccessService
 
         if (user is null)
         {
-            throw new Exception("User not exist");
+            throw new Exception("Пользователь не определен");
         }
 
         await _accessRepository.AddAccess(access);
@@ -39,12 +39,12 @@ public class AccessService : IAccessService
 
         if (access is null)
         {
-            throw new Exception("Access not exist");
+            throw new Exception("Доступ не был обнаружен");
         }
 
         if (access.IsOwner)
         {
-            throw new Exception("Сannot delete the owner access");
+            throw new Exception("Невозможно удалить доступ");
         }
 
         _accessRepository.DeleteAccess(access);
@@ -56,12 +56,12 @@ public class AccessService : IAccessService
 
         if (access is null)
         {
-            throw new Exception("Access not exist");
+            throw new Exception("Доступ не был обнаружен");
         }
 
         if (access.IsOwner)
         {
-            throw new Exception("Сannot delete the owner access");
+            throw new Exception("Невозможно удалить доступ");
         }
 
         _accessRepository.DeleteAccess(access);
