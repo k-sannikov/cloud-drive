@@ -37,7 +37,7 @@ namespace CloudDrive.Controllers
         /// <param name="key" example="create-note">Ключ маршрута для перенаправления запроса</param>
         /// <param name="nodeId" example="b6a4ca9f-5d2d-440b-8d59-5a04be50ea60">Id ноды</param>
         [HttpPost]
-        [Route("{key}/{id}")]
+        [Route("{key}/{nodeId}")]
         public async Task<IActionResult> Proxy([FromRoute] string key,
             [FromRoute] string nodeId,
             [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] JsonElement body)
