@@ -180,12 +180,9 @@ namespace CloudDrive
             app.UseSwagger();
             app.UseSwaggerUI();
 
-            //app.UseHttpsRedirection();
 
             app.UseCors(builder =>
             {
-                //builder.WithOrigins("http://localhost:3000");
-                //builder.AllowCredentials();
                 builder.AllowAnyHeader();
                 builder.AllowAnyMethod();
                 builder.AllowAnyOrigin();

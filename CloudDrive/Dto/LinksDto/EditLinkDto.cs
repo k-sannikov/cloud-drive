@@ -6,8 +6,7 @@ public class EditLinkDto
 {
     [Required]
     public string Name { get; set; }
-    [Required]
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
     [Required]
     public string Url { get; set; }
 }
