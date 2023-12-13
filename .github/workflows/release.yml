@@ -1,0 +1,38 @@
+name: 'release'
+on:
+  push:
+    tags:
+      - '*.*.*'
+      
+jobs:
+
+  release:
+
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Create cloud_drive image
+        run: |
+          docker build -t ksannikow/cloud_drive:latest -t ksannikow/cloud_drive:${{ env.RELEASE_VERSION }} -f ./CloudDrive/Dockerfile .
+
+      - name: Create cloud_drive_migrations image
+        run: |
+          docker build -t ksannikow/cloud_drive_migrations:latest -t ksannikow/cloud_drive_migrations:${{ env.RELEASE_VERSION }} -f ./CloudDrive/Dockerfile .
+
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Publish cloud_drive image
+        run: |
+          docker push ksannikow/cloud_drive:latest
+          docker push ksannikow/cloud_drive:${{ env.RELEASE_VERSION }}
+
+      - name: Publish migrations image
+        run: |
+          docker push ksannikow/cloud_drive_migrations:latest
+          docker push ksannikow/cloud_drive_migrations:${{ env.RELEASE_VERSION }}

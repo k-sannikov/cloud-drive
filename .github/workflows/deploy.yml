@@ -1,9 +1,5 @@
-# rebuild containers on remote server through ssh.
-
-name: "Deploy"
+name: 'deploy'
 on:
-  push:
-    branches: ["master"]
   workflow_dispatch:
     inputs:
       cloudDriveVersion:
@@ -20,29 +16,6 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-
-      - uses: actions/checkout@v4
-
-      - name: Create cloud_drive image
-        run: |
-          docker build -t ksannikow/cloud_drive:latest -t ksannikow/cloud_drive:${{ github.run_number }} -f ./CloudDrive/Dockerfile .
-
-      - name: Create cloud_drive_migrations image
-        run: |
-          docker build -t ksannikow/cloud_drive_migrations:latest -t ksannikow/cloud_drive_migrations:${{ github.run_number }} -f ./CloudDrive/Dockerfile .
-
-      - name: Docker login
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Publish cloud_drive image
-        run: |
-          docker push ksannikow/cloud_drive:latest
-          docker push ksannikow/cloud_drive:${{ github.run_number }}
-
-      - name: Publish migrations image
-        run: |
-          docker push ksannikow/cloud_drive_migrations:latest
-          docker push ksannikow/cloud_drive_migrations:${{ github.run_number }}
 
       - name: Build containers
         uses: appleboy/ssh-action@v1.0.0
