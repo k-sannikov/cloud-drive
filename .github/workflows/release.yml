@@ -22,7 +22,7 @@ jobs:
 
       - name: Create cloud_drive_migrations image
         run: |
-          docker build -t ksannikow/cloud_drive_migrations:latest -t ksannikow/cloud_drive_migrations:${{ env.RELEASE_VERSION }} -f ./CloudDrive/Dockerfile .
+          docker build -t ksannikow/cloud_drive_migrations:latest -t ksannikow/cloud_drive_migrations:${{ env.RELEASE_VERSION }} -f ./Infrastructure.Migrations/Dockerfile .
 
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
