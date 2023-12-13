@@ -29,6 +29,8 @@ jobs:
               cd ${{ secrets.PROJECT_FOLDER }};
               git checkout master;
               docker-compose --file docker-compose-prod.yml down --rmi local;
+              docker pull ksannikow/cloud_drive
+              docker pull ksannikow/cloud_drive_migrations
               git pull --rebase;
               docker-compose --file docker-compose-prod.yml up -d;
               docker system prune --all --force;
