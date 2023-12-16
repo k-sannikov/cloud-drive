@@ -90,7 +90,7 @@ namespace CloudDrive.Controllers
 
             if (user is null)
             {
-                return BadRequest(new ErrorResponse("Username or password not exist"));
+                return BadRequest(new ErrorResponse("Неправильный логин или пароль"));
             }
 
             string jwtToken = _tokenService.GenerateJwtToken(user);

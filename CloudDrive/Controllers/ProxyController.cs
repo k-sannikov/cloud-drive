@@ -93,6 +93,7 @@ namespace CloudDrive.Controllers
                     UiUrl = service.UiUrl,
                     Label = service.Label,
                     Icon = service.Icon,
+                    Type = service.Type,
                 };
 
                 settings.Add(settingsDto);

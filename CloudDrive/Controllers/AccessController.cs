@@ -46,7 +46,7 @@ namespace CloudDrive.Controllers
 
             if (!hasAccess)
             {
-                return StatusCode(403, new ErrorResponse("No accesses"));
+                return StatusCode(403, new ErrorResponse("Нет доступа"));
             }
 
             List<Access> accesses = await _accessService.GetByNodeId(nodeId);
@@ -69,27 +69,34 @@ namespace CloudDrive.Controllers
 
             if (access is null)
             {
-                return StatusCode(403, new ErrorResponse("No accesses"));
+                return StatusCode(403, new ErrorResponse("Нет доступа к узлу"));
             }
 
             if (!access.IsOwner)
             {
-                return StatusCode(403, new ErrorResponse("You are not the owner node"));
+                return StatusCode(403, new ErrorResponse("Вы не владелец узла"));
             }
 
             User user = await _authService.GetUserByUsername(body.Username);
 
             if (user is null)
             {
-                return BadRequest(new ErrorResponse("A user with this name does not exist"));
+                return BadRequest(new ErrorResponse("Пользователь с таким логином не существует"));
             }
 
             if (User.GetUserId() == user.Id)
             {
-                return BadRequest(new ErrorResponse("You can't give your rights to yourself"));
+                return BadRequest(new ErrorResponse("Вы не можете предоставить права самому себе"));
             }
 
             Access newAccess = body.ToDomain(user.Id);
+
+            Access oldAccess = await _accessService.GetAccess(newAccess.UserId, newAccess.NodeId);
+
+            if (oldAccess is not null)
+            {
+                return BadRequest(new ErrorResponse($"Доступ пользователю {body.Username} уже выдан"));
+            }
 
             try
             {
@@ -116,14 +123,14 @@ namespace CloudDrive.Controllers
 
             if (access is null)
             {
-                return StatusCode(403, new ErrorResponse("No accesses"));
+                return StatusCode(403, new ErrorResponse("Нет доступа"));
             }
 
             bool hasAccess = await _accessService.HasAccess(User.GetUserId(), access.NodeId);
 
             if (!hasAccess)
             {
-                return StatusCode(403, new ErrorResponse("No accesses"));
+                return StatusCode(403, new ErrorResponse("Нет доступа"));
             }
 
             await _accessService.DeleteAccess(accessId);

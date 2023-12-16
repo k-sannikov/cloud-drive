@@ -17,4 +17,8 @@ public class ProxyServiceDto
     [Example("PHN2ZyB3aWR0aD0iMjUiIGhlaWdodD0iMjYiIHZpZXdCb3g9IjAgMCAyNS")]
     public string Icon { get; set; }
 
+    [Required]
+    [Example("Note")]
+    public string Type { get; set; }
+
 }

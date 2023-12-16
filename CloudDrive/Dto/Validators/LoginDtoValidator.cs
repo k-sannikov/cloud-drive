@@ -10,8 +10,8 @@ namespace CloudDrive.Dto.Validators
             RuleFor(loginDto => loginDto.Username)
                 .MinimumLength(3)
                 .WithMessage("логин должен включать не менее 3 символов")
-                .MaximumLength(255)
-                .WithMessage("логин должен включать не более 255 символов")
+                .MaximumLength(25)
+                .WithMessage("логин должен включать не более 25 символов")
                 .NotEmpty()
                 .WithMessage("логин не может быть пустым");
 
@@ -20,8 +20,8 @@ namespace CloudDrive.Dto.Validators
                 .WithMessage("пароль не может быть пустым")
                 .MinimumLength(6)
                 .WithMessage("пароль должен включать не менее 6 символов")
-                .MaximumLength(60)
-                .WithMessage("пароль должен включать не более 60 символов");
+                .MaximumLength(25)
+                .WithMessage("пароль должен включать не более 25 символов");
         }
     }
 }

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CloudDrive.Controllers
 {
     /// <summary>
-    /// Внетреннее API для взаимодействия с внешними микросервисами
+    /// Внутреннее API для взаимодействия с внешними микросервисами
     /// </summary>
     [ApiController]
     [ApiKeyAuthFilter]

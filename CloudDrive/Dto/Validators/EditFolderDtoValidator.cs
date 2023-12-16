@@ -3,15 +3,11 @@ using FluentValidation;
 
 namespace CloudDrive.Dto.Validators
 {
-    public class CreateFolderDtoValidator : AbstractValidator<CreateFolderDto>
+    public class EditFolderDtoValidator : AbstractValidator<EditFolderDto>
     {
-        public CreateFolderDtoValidator()
+        public EditFolderDtoValidator()
         {
-            RuleFor(createFolderDto => createFolderDto.ParentId)
-                .NotEmpty()
-                .WithMessage("id родительской папки не может быть пустым");
-
-            RuleFor(createFolderDto => createFolderDto.Name)
+            RuleFor(editNameDto => editNameDto.Name)
                 .NotEmpty()
                 .WithMessage("название папки не может быть пустым")
                 .MaximumLength(50)

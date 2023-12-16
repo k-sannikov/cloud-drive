@@ -14,8 +14,8 @@ namespace CloudDrive.Dto.Validators
             RuleFor(createLinkDto => createLinkDto.Name)
                 .NotEmpty()
                 .WithMessage("название сслыки не может быть пустым")
-                .MaximumLength(60)
-                .WithMessage("название ссылки не может включать более 60 символов");
+                .MaximumLength(50)
+                .WithMessage("название ссылки не может включать более 50 символов");
 
             RuleFor(createLinkDto => createLinkDto.Description)
                 .MaximumLength(255)
