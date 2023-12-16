@@ -20,17 +20,10 @@ jobs:
       - name: Build containers
         uses: appleboy/ssh-action@v1.0.0
         with:
-            host: ${{ secrets.SSH_HOST }}
-            username: ${{ secrets.SSH_USER }}
-            password: ${{ secrets.SSH_PASSWORD }}
-            script: |
-              export CLOUD_DRIVE_VERSION=${{ github.event.inputs.cloudDriveVersion }}
-              export CLOUD_DRIVE_MIGRATIONS_VERSION=${{ github.event.inputs.cloudDriveMigrationsVersion }}
-              cd ${{ secrets.PROJECT_FOLDER }};
-              git checkout master;
-              docker-compose --file docker-compose-prod.yml down --rmi local;
-              docker pull ksannikow/cloud_drive
-              docker pull ksannikow/cloud_drive_migrations
-              git pull --rebase;
-              docker-compose --file docker-compose-prod.yml up -d;
-              docker system prune --all --force;
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd ${{ secrets.PROJECT_FOLDER }};
+            chmod u+x create-new-containers.sh
+            ./create-new-containers.sh  ${{ github.event.inputs.cloudDriveVersion }} ${{ github.event.inputs.cloudDriveMigrationsVersion }}
