@@ -27,7 +27,7 @@ namespace CloudDrive.Controllers
         private readonly IValidator<LoginDto> _loginDtoValidator;
         private readonly IValidator<RefreshTokenDto> _refreshTokenDtoValidator;
 
-        const int _refreshTokenExpiredTime = 20;
+        const int _refreshTokenExpiredTime = 80;
 
         public AuthController(IUnitOfWork unitOfWork,
             IAuthService authService,
@@ -126,12 +126,12 @@ namespace CloudDrive.Controllers
 
             if (user is null)
             {
-                return BadRequest(new ErrorResponse("Refresh token not exist"));
+                return BadRequest(new ErrorResponse("Токен обновления не существует"));
             }
 
             if (user.RefreshTokenExpiryTime <= DateTime.UtcNow)
             {
-                return BadRequest(new ErrorResponse("Refresh token expired"));
+                return BadRequest(new ErrorResponse("Срок действия токена обновления истек"));
             }
 
             string jwtToken = _tokenService.GenerateJwtToken(user);
