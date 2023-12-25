@@ -159,5 +159,16 @@ namespace CloudDrive.Controllers
         {
             return Ok();
         }
+
+        /// <summary>
+        /// Получить UserName пользователя
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        [Route("username")]
+        public IActionResult GetUsername()
+        {
+            return Ok(new UserDto() { UserName = User.GetUserName() });
+        }
     }
 }
