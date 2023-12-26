@@ -30,7 +30,7 @@ public class FileSystemRepository : IFileSystemRepository
 
         if (counters.NodesCreated == 0)
         {
-            throw new Exception("Заметка не создана");
+            throw new Exception("Узел не создан");
         }
     }
 
@@ -60,7 +60,7 @@ public class FileSystemRepository : IFileSystemRepository
 
         if (counters.PropertiesSet == 0)
         {
-            throw new Exception("Заметка не переименована");
+            throw new Exception("Узел не переименован");
         }
     }
 
@@ -79,7 +79,7 @@ public class FileSystemRepository : IFileSystemRepository
 
         if (counters.PropertiesSet == 0)
         {
-            throw new Exception("Заметка не изменена");
+            throw new Exception("Узел не изменен");
         }
     }
 
@@ -99,7 +99,7 @@ public class FileSystemRepository : IFileSystemRepository
 
         if (counters.NodesCreated == 0 || counters.RelationshipsCreated == 0)
         {
-            throw new Exception("Заметка или связи не созданы");
+            throw new Exception("Узел или связь не созданы");
         }
     }
 
@@ -123,7 +123,7 @@ public class FileSystemRepository : IFileSystemRepository
 
         if (countersMultiDelete.NodesDeleted == 0 && countersSingleDelete.NodesDeleted == 0)
         {
-            throw new Exception("Заметка не удалена");
+            throw new Exception("Узел не удален");
         }
     }
 
@@ -132,7 +132,8 @@ public class FileSystemRepository : IFileSystemRepository
         string query =
             $"MATCH (parent:{NodeType.Folder})<-[:{_relation}*]-(child)" +
             $"WHERE child.id = \"{nodeId}\"" +
-            $"RETURN parent";
+            $"RETURN parent" +
+            $" ORDER BY id(parent)";
 
         EagerResult<IReadOnlyList<IRecord>> response = await _driver.ExecutableQuery(query)
             .ExecuteAsync();
